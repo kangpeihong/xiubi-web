@@ -1,0 +1,43 @@
+.active{
+	img{
+		transform: scale(1.8);
+		position: absolute;
+		z-index: 10;
+		transition: .8s;
+	}
+	div{
+		display: inline-block;
+		vertical-align: top;
+		position: relative;
+		margin-bottom: 30px;
+		padding-left: 15px;
+		transition: .4s;
+	}
+	p{
+		display: block;
+		margin: 2px;
+		background:rgba(255, 255, 255, .2);
+		padding-left: 80px;
+		padding-right: 10px;
+		font-family: YouYuan;
+		font-size: 14px;
+		text-align: right;
+		height: 20px;
+		transition: .4s;
+		border-top-right-radius: 3px;
+		border-bottom-right-radius: 3px;
+	}
+	&:nth-child(1){
+		width: 170px;
+	}
+	&:nth-child(2){
+		width: 220px;
+
+	}
+	&:nth-child(3){
+		width: 300px;
+	}
+	:last-child{
+		font-family: ITC Avant Garde Gothic Std Book;
+	}
+}
