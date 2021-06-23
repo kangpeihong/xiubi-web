@@ -487,7 +487,7 @@ body {
   position: absolute;
   width: 300px;
   height: 300px;
-  z-index: 999;
+  z-index: 800;
   background: #000;
 }
 .player-2 {
