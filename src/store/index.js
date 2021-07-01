@@ -7,17 +7,23 @@ export default new Vuex.Store({
   state: {
     loginShow: true,
     registerShow: false, //注册页面开关
-    findNumber:false,
+    findNumber: false,
     againOrder: false,
     checkOrder: false,
     indexs: 0,
     // back: false,
-    addressIndex:0
+    addressIndex: 0,
+    menuLeft: false,
+    menuRight: false,
   },
   mutations: {
+    setMenuLeft(state, data) {
+      state.menuLeft = data
+    },
+    setMenuRight(state, data) {
+      state.menuRight = data
+    },
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {},
 })

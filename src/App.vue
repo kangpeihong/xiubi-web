@@ -1,78 +1,98 @@
 <template>
   <div id="app">
-    <div class="nav-list">
-      <!-- <div>
+     <!-- <el-form ref="form" :model="userInfo">
+        <el-form-item :rules="[
+            {message: '请输入账号', trigger: 'blur' },
+          ]">
+          <el-input
+            v-model="userInfo.number"
+            placeholder="请输入账号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item  prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]">
+          <el-input
+            v-model="userInfo.password"
+            placeholder="请输入密码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button>登陆</el-button>
+        </el-form-item>
+      </el-form> -->
+    <div v-if="!flag">
+      <div class="nav-list">
+        <!-- <div>
         <img src="./assets/images/logoo.png" alt="" class="logo">
       </div> -->
-      <div class="login" v-if="show">
-        <!-- <router-link to="/login"  @click="loginUser">登录</router-link> <span class="sbox"></span>
+        <div class="login" v-if="show">
+          <!-- <router-link to="/login"  @click="loginUser">登录</router-link> <span class="sbox"></span>
        -->
-        <!-- <router-link to="/register">注册</router-link> -->
+          <!-- <router-link to="/register">注册</router-link> -->
 
-        <span @click="loginUser">
-          <span class="iconfont icon-denglu login-user"></span>
+          <span @click="loginUser">
+            <span class="iconfont icon-denglu login-user"></span>
 
-          登录</span
-        ><span class="sbox"></span>
-        <span @click="register">
-          <span class="iconfont icon-zhuce"></span>
-          注册</span
-        >
-      </div>
-      <div class="login login-left" v-if="!show">
-        <el-avatar
-          :size="25"
-          src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-        >
-        </el-avatar>
-        <span class="sbox"></span>
+            登录</span
+          ><span class="sbox"></span>
+          <span @click="register">
+            <span class="iconfont icon-zhuce"></span>
+            注册</span
+          >
+        </div>
+        <div class="login login-left" v-if="!show">
+          <el-avatar
+            :size="25"
+            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+          >
+          </el-avatar>
+          <span class="sbox"></span>
 
-        <el-dropdown>
-          <span class="userinfo"
-            >{{ userinfo }}<i class="el-icon-arrow-down el-icon--right"></i
-          ></span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="history"
-              >历史订单</el-dropdown-item
-            >
-            <el-dropdown-item @click.native="modifyPass"
-              >修改密码</el-dropdown-item
-            >
-            <el-dropdown-item @click.native="loginOut">退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-    </div>
-
-    <div class="hpicture">
-      <div
-        v-for="(item, index) in userArr"
-        :key="item.id"
-        class="user-head"
-        :class="index === currentNum ? 'active' : ''"
-        @mouseenter="currentInfo(index)"
-        @mouseleave="hide()"
-      >
-        <img :src="item.headAddress" alt="" />
-        <div v-show="ifToken">
-          <p>{{ item.name }}</p>
-          <p>{{ item.jobs }}</p>
-          <p style="font-family: HeiTi">{{ item.phone }}</p>
+          <el-dropdown>
+            <span class="userinfo"
+              >{{ userinfo }}<i class="el-icon-arrow-down el-icon--right"></i
+            ></span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="history"
+                >历史订单</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="modifyPass"
+                >修改密码</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="loginOut">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
-    </div>
 
-    <publicMessage />
+      <div class="hpicture">
+        <div
+          v-for="(item, index) in userArr"
+          :key="item.id"
+          class="user-head"
+          :class="index === currentNum ? 'active' : ''"
+          @mouseenter="currentInfo(index)"
+          @mouseleave="hide()"
+        >
+          <img :src="item.headAddress" alt="" />
+          <div v-show="ifToken">
+            <p>{{ item.name }}</p>
+            <p>{{ item.jobs }}</p>
+            <p style="font-family: HeiTi">{{ item.phone }}</p>
+          </div>
+        </div>
+      </div>
 
-    <router-view />
+      <publicMessage />
 
-    <!-- <keep-alive>
+      <router-view />
+
+      <!-- <keep-alive>
       <router-view v-if='$route.meta.keepAlive'/>
     </keep-alive> -->
 
-    <prolist v-on:open-list="this.$router.push('/')"></prolist>
+      <prolist v-on:open-list="this.$router.push('/')"></prolist>
 
-    <!-- <div class="info">
+      <!-- <div class="info">
       <h4>北京·密云</h4>
       <p>北京修文印刷技术有限公司</p>
       <p>单色印刷车间</p>
@@ -85,52 +105,60 @@
       <p>QQ:583895185</p>
       </div>
     </div> -->
-    <div class="player">
-      <div class="player-name">
-        {{
-          workshop == 1
-            ? '车间1'
-            : workshop == 2
-            ? '车间2'
-            : workshop == 3
-            ? '车间3'
-            : ''
-        }}
+      <div class="player">
+        <div class="player-name">
+          {{
+            workshop == 1
+              ? '车间1'
+              : workshop == 2
+              ? '车间2'
+              : workshop == 3
+              ? '车间3'
+              : ''
+          }}
+        </div>
+        <div class="prism-player" id="player-con"></div>
       </div>
-      <div class="prism-player" id="player-con"></div>
+
+      <div class="player-2 player-init" @click="exchange(2)">
+        <div class="player-name">
+          {{
+            workshop2 == 1
+              ? '车间1'
+              : workshop2 == 2
+              ? '车间2'
+              : workshop2 == 3
+              ? '车间3'
+              : ''
+          }}
+        </div>
+        <div class="prism-player" id="player-con2"></div>
+      </div>
+
+      <div class="player-3 player-init" @click="exchange(3)">
+        <div class="player-name">
+          {{
+            workshop3 == 1
+              ? '车间1'
+              : workshop3 == 2
+              ? '车间2'
+              : workshop3 == 3
+              ? '车间3'
+              : ''
+          }}
+        </div>
+        <div class="prism-player" id="player-con3"></div>
+      </div>
+
+      <div class="footer"></div>
     </div>
 
-    <div class="player-2 player-init" @click="exchange(2)">
-      <div class="player-name">
-        {{
-          workshop2 == 1
-            ? '车间1'
-            : workshop2 == 2
-            ? '车间2'
-            : workshop2 == 3
-            ? '车间3'
-            : ''
-        }}
-      </div>
-      <div class="prism-player" id="player-con2"></div>
+    <!-- 移动端开始 -->
+    <div class="" v-else>
+      <!-- 登陆页 -->
+      <router-view />
     </div>
 
-    <div class="player-3 player-init" @click="exchange(3)">
-      <div class="player-name">
-        {{
-          workshop3 == 1
-            ? '车间1'
-            : workshop3 == 2
-            ? '车间2'
-            : workshop3 == 3
-            ? '车间3'
-            : ''
-        }}
-      </div>
-      <div class="prism-player" id="player-con3"></div>
-    </div>
-
-    <div class="footer"></div>
   </div>
 </template>
 <script
@@ -143,9 +171,17 @@
 import Bus from './utils/bus.js'
 import prolist from './views/productList'
 import publicMessage from './views/publicMessage'
+import mobileLogin from './mobile/mobileLogin'
+import mobileRegister from './mobile/mobileRegister'
+
 export default {
-  data() {
+  data () {
     return {
+      userInfo: {
+        number: '',
+        password: ''
+      },
+      flag: null,
       videoUrl: './playVideo/video.html',
       workshop: 1,
       workshop2: 2,
@@ -250,19 +286,32 @@ export default {
   },
   components: {
     prolist,
-    publicMessage
+    publicMessage,
+    mobileLogin,
+    mobileRegister
   },
 
   methods: {
-    history() {
+    isPhone () {
+      if (
+        navigator.userAgent.match(
+          /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+        )
+      ) {
+        this.flag = true
+      } else {
+        this.flag = false
+      }
+    },
+    history () {
       this.$router.push('./historyPage')
     },
-    loginUser() {
-      this.$router.push('./views/login/index').catch(() => {})
+    loginUser () {
+      this.$router.push('./views/login/index').catch(() => { })
       this.$store.state.loginShow = true
     },
-    register() {
-      this.$router.push('/register').catch(() => {})
+    register () {
+      this.$router.push('/register').catch(() => { })
       this.$store.state.registerShow = true
     },
     // getUrl () {
@@ -285,10 +334,10 @@ export default {
     //     })
     // },
     //修改密码
-    modifyPass() {
+    modifyPass () {
       this.$router.push('/modify')
     },
-    getinfo() {
+    getinfo () {
       const token = JSON.parse(window.sessionStorage.getItem('user-token'))
       if (token) {
         this.show = false
@@ -298,7 +347,7 @@ export default {
         // console.log("2332543434", this.userinfo);
       }
     },
-    loginOut() {
+    loginOut () {
       this.$confirm('确定要退出吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -309,13 +358,13 @@ export default {
           window.sessionStorage.removeItem('listInfo')
           window.location.reload()
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-    getOrder() {
+    getOrder () {
       this.$router.push('/order')
     },
     // 获取员工信息
-    getparter() {
+    getparter () {
       this.$axios({
         method: 'get',
         url: '/api/xwEmployees/back',
@@ -330,15 +379,15 @@ export default {
           console.log(11111111, err)
         })
     },
-    currentInfo(index) {
+    currentInfo (index) {
       if (this.currentNum !== index) {
         this.currentNum = index
       }
     },
-    hide() {
+    hide () {
       this.currentNum = null
     },
-    getplay() {
+    getplay () {
       this.$axios({
         method: 'get',
         url: '/api/room/1001'
@@ -347,50 +396,50 @@ export default {
         this.video.source =
           'https://www.xiubi.com.cn/group1/M00/00/02/rBH8OWBcOcGAUvbnbFRSneUPKTs436.MOV'
         // console.log("112", this.video.source);
-        this.player1 = new Aliplayer(this.video, function(player) {
+        this.player1 = new Aliplayer(this.video, function (player) {
           console.log('The player is created')
         })
 
         this.video2.source = '//player.alicdn.com/video/aliyunmedia.mp4'
         // console.log("112", this.video.source);
-        this.player2 = new Aliplayer(this.video2, function(player) {
+        this.player2 = new Aliplayer(this.video2, function (player) {
           console.log('The player is created222')
           player.setVolume(0)
         })
 
         this.video3.source = '//player.alicdn.com/video/aliyunmedia.mp4'
         // console.log("112", this.video.source);
-        this.player3 = new Aliplayer(this.video3, function(player) {
+        this.player3 = new Aliplayer(this.video3, function (player) {
           player.setVolume(0)
 
           console.log('The player is created222')
         })
       })
     },
-    replay(video, type) {
+    replay (video, type) {
       switch (type) {
         case 1:
-          this.player1 = new Aliplayer(video, function(player) {
+          this.player1 = new Aliplayer(video, function (player) {
             console.log('The player is created22')
           })
           break
 
         case 2:
-          this.player2 = new Aliplayer(video, function(player) {
+          this.player2 = new Aliplayer(video, function (player) {
             console.log('The player is created22')
             player.setVolume(0)
           })
           break
 
         case 3:
-          this.player3 = new Aliplayer(video, function(player) {
+          this.player3 = new Aliplayer(video, function (player) {
             console.log('The player is created22')
             player.setVolume(0)
           })
           break
       }
     },
-    exchange(index) {
+    exchange (index) {
       switch (index) {
         case 2:
           let url = this.video.source
@@ -418,10 +467,12 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     // this.getUrl()
+    this.isPhone();
+    console.log('flag', this.flag);
 
-    
+
     this.getinfo()
     Bus.$on('change', e => {
       console.log('vvvv', e)
@@ -430,7 +481,7 @@ export default {
       }
     })
   },
-  mounted() {
+  mounted () {
     this.getparter(), this.getplay()
     let token = sessionStorage.getItem('user-token')
 
@@ -442,7 +493,8 @@ export default {
   }
 }
 </script>
-<style lang="less" socped>
+<style lang="less" scoped>
+
 // #app{
 //   background: #ccc;
 // }
@@ -615,4 +667,5 @@ body {
     }
   }
 }
+
 </style>

@@ -26,8 +26,10 @@ td {
   margin: 0;
   padding: 0;
 }
-html {
-  overflow: hidden;
+html ,body{
+  
+  /* overflow: hidden; */
+  scroll-behavior:smooth
 }
 *,
 *:before,
