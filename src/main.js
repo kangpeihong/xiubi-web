@@ -8,20 +8,33 @@ import ElementUi from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import htmlToPdf from './utils/htmlToPdf'
 import animated from 'animate.css'
-import "./assets/iconfont/iconfont.css"
-import utils from "./assets/js/utils";
-import request from "./assets/js/request";
+import './assets/iconfont/iconfont.css'
+import utils from './assets/js/utils'
+import request from './assets/js/request'
 import api from './assets/js/api'
-import VueLazyLoad from 'vue-lazyload'; // 懒加载
+import Vant from 'vant'
+import 'vant/lib/index.css'
+
+import VueLazyLoad from 'vue-lazyload' // 懒加载
 // import Viewer from 'v-viewer'
 
 import 'viewerjs/dist/viewer.css'
 
-
-import Print from 'vue-print-nb';
+import Print from 'vue-print-nb'
 // Vue.use(Viewer);
 
-Vue.use(Print);
+//TODO: 判断是否为移动端
+
+if (
+  navigator.userAgent.match(
+    /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+  )
+) {
+  require('./utils/rem.js')
+} else {
+}
+Vue.use(Vant)
+Vue.use(Print)
 Vue.use(animated)
 Vue.use(htmlToPdf)
 Vue.use(ElementUi)
@@ -34,15 +47,14 @@ Vue.prototype.$api = api
 
 if (window.ActiveXObject || 'ActiveXObject' in window) {
   require('./assets/css/ie.less')
-
 }
 Vue.use(VueLazyLoad, {
   error: '../static/img/tzb.jpg', // 加载错误的图片
-  loading: '../static/img/tzb.jpg' // 加载时的图片
-});
+  loading: '../static/img/tzb.jpg', // 加载时的图片
+})
 
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount('#app')
