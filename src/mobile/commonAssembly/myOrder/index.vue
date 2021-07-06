@@ -1,12 +1,12 @@
 <template>
   <div>
     <navBar :title="title"></navBar>
+    123
   </div>
 </template>
 
 <script>
 import navBar from '../navBar'
-
 export default {
   name: '',
   data () {
