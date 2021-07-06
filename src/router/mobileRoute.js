@@ -4,6 +4,7 @@ const login = () => import('../mobile/mobileLogin')
 const register = () => import('../mobile/mobileRegister')
 const mobileIndex = () => import('../mobile/mobileIndex')
 const historyPage = () => import('../mobile/commonAssembly/historyPage')
+const myOrder = () => import('../mobile/commonAssembly/myOrder')
 
 const mobileRoutes = [
   {
@@ -25,6 +26,11 @@ const mobileRoutes = [
     path: '/historyPage',
     name: 'historyPage',
     component: historyPage,
+  },
+  {
+    path: '/myOrder',
+    name: 'myOrder',
+    component: myOrder,
   },
 ]
 

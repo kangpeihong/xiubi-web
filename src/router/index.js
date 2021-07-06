@@ -27,7 +27,6 @@ function isPhone() {
 }
 
 let ifPhoneStatus = isPhone()
-console.log('ifphone', ifPhoneStatus)
 
 const history = () => import('../views/historyPage')
 
@@ -107,14 +106,9 @@ router.beforeEach((to, from, next) => {
   window.addEventListener('load', function() {
     // 移动端跳转页面
     if (ifPhoneStatus) {
-      // debugger
-      // router.addRoutes(mobileRoute)
       next('/login')
-      console.log('this55', router)
     } else {
       if (
-        to.path === '/mobileIndex' ||
-        to.path === '/historyPage' ||
         to.path === '/login' ||
         to.path === '/findnumber' ||
         to.path === '/register'
@@ -126,8 +120,6 @@ router.beforeEach((to, from, next) => {
   })
   // 1.登录页面直接放行
   if (
-    to.path === '/mobileIndex' ||
-    to.path === '/historyPage' ||
     to.path === '/login' ||
     to.path === '/register' ||
     to.path === '/' ||

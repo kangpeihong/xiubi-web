@@ -12,7 +12,7 @@
             v-for="(item, index) in expressData"
             :key="index"
           >
-            {{item.dateTime | formatData}}{{ item.info }}
+            {{item.dateTime | formatData}} <span>:</span> {{ item.info }}
           </li>
         </ul>
       </div>

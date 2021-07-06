@@ -8,13 +8,13 @@
       <div class="login-number" v-if="checkNumber">
         <el-form ref="form" :model="userInfo">
           <el-form-item
-            prop="number"
+            prop="variable"
             :rules="[
               { required: true, message: '请输入账号', trigger: 'blur' }
             ]"
           >
             <el-input
-              v-model="userInfo.number"
+              v-model="userInfo.variable"
               placeholder="请输入账号"
             ></el-input>
           </el-form-item>
@@ -27,6 +27,7 @@
             <el-input
               v-model="userInfo.password"
               placeholder="请输入密码"
+              :show-password="true"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -36,32 +37,32 @@
       </div>
       <!-- 手机号登陆 -->
       <div class="login-phone" v-else>
-        <el-form ref="formPhone" :model="userPhone">
+        <el-form ref="formPhone" :model="userInfo">
           <el-form-item
-            prop="number"
+            prop="variable"
             :rules="[
-              { required: true, message: '请输入账号', trigger: 'blur' }
+              { required: true, message: '请输入手机号', trigger: 'blur' }
             ]"
           >
             <el-input
-              v-model="userPhone.phone"
+              v-model="userInfo.variable"
               placeholder="请输入账号"
             ></el-input>
           </el-form-item>
           <el-form-item
             class="codes"
-            prop="password"
+            prop="code"
             :rules="[
               { required: true, message: '请输入验证码', trigger: 'blur' }
             ]"
           >
             <el-input
-              v-model="userPhone.code"
+              v-model="userInfo.code"
               placeholder="请输入验证码"
             ></el-input>
-             <el-button @click="sendCode" :disabled="isDisabled">{{
-            buttonName
-          }}</el-button>
+            <el-button @click="sendCode" :disabled="isDisabled">{{
+              buttonName
+            }}</el-button>
           </el-form-item>
           <el-form-item>
             <el-button @click="phoneLogin">登陆</el-button>
@@ -70,7 +71,7 @@
       </div>
       <!--忘记密码/注册 -->
       <div class="forget">
-        <span @click="showPopup">忘记密码?</span>
+        <span @click="showPopup">账号找回?</span>
         <span>|</span>
         <span @click="register">注册</span>
       </div>
@@ -78,7 +79,7 @@
       <div class="forget-box">
         <van-popup v-model="show">
           <div class="modify">
-            <div class="title">修改密码</div>
+            <div class="title">账号找回</div>
             <div class="modify-password">
               <span>新密码</span>
               <span>:</span>
@@ -87,7 +88,7 @@
               </div>
             </div>
             <div class="submit">
-              <el-button type="primary">确认</el-button>
+              <el-button type="primary" @click="submit">确认</el-button>
             </div>
           </div>
         </van-popup>
@@ -103,7 +104,9 @@
           <div class="icon">
             <i class="el-icon-mobile-phone"></i>
           </div>
-          <div class="icon-name" @click="checkPhoneLogin">{{checkNumber?'手机号登陆':'账号密码登陆'}}</div>
+          <div class="icon-name" @click="checkPhoneLogin">
+            {{ checkNumber ? '手机号登陆' : '账号密码登陆' }}
+          </div>
         </div>
       </div>
     </div>
@@ -115,17 +118,20 @@ export default {
   name: 'mobileLogin',
   data () {
     return {
-      checkNumber:true,
+      checkNumber: true,
       show: false,
-      isDisabled:false,
-      buttonName:'发送验证码',
+      isDisabled: false,
+      time: 60,
+      buttonName: '发送验证码',
       userInfo: {
-        number: '',
-        password: ''
+        variable: "", // 用户名
+        password: "", // 密码
+        code: "",
+        uuid: ""
       },
-      userPhone:{
-        phone:'',
-        code:''
+      userPhone: {
+        phone: '',
+        code: ''
       }
     }
   },
@@ -136,26 +142,74 @@ export default {
   methods: {
     showPopup () {
       this.show = true;
+
     },
     register () {
       // this.$router.push('/register')
       this.$router.push('/register')
     },
-    sendCode(){
-
+    // 发送验证码
+    sendCode () {
+      if (this.userInfo.variable !== '') {
+        let data = {
+          phoneNumber: this.userInfo.variable
+        }
+        this.$request.get(this.$api.code, data).then(res => {
+          console.log('code', res);
+          this.$toast.success('发送验证码成功');
+          this.isDisabled = true;
+          let _this = this;
+          var interval = window.setInterval(function () {
+            _this.buttonName = "已发送" + _this.time;
+            --_this.time;
+            if (_this.time < 0) {
+              _this.buttonName = "重新发送";
+              _this.time = 60;
+              _this.isDisabled = false;
+              window.clearInterval(interval);
+            }
+          }, 1000);
+        }).catch(err => {
+          console.log(err, "失败的验证码");
+          this.$toast('发送验证码失败');
+        })
+      }
     },
     // 账号密码登陆
-    numberLogin(){
-      console.log('123123');
-      this.$router.push('/mobileIndex')
-
+    numberLogin () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.commonLogin()
+        }
+      })
     },
     //手机号登陆
     phoneLogin(){
-
+      this.$refs.formPhone.validate(valid => {
+        if (valid) {
+          this.commonLogin()
+        }
+      })
     },
-    checkPhoneLogin(){
-      this.checkNumber  = !this.checkNumber;
+    //公告登陆
+    commonLogin () {
+      this.$request.post(this.$api.login, this.userInfo).then(res => {
+        console.log('res',res);
+        
+        window.sessionStorage.setItem("user-token", JSON.stringify(res.data));
+        this.$toast.success('登陆成功');
+        this.$router.push('/mobileIndex')
+      }).catch(err => {
+        console.log(err, "失败的login");
+        this.$toast('账号或密码错误');
+      })
+    },
+    //修改密码
+    submit(){
+      
+    },
+    checkPhoneLogin () {
+      this.checkNumber = !this.checkNumber;
     }
   }
 }
@@ -275,19 +329,19 @@ export default {
   color: #3a8ee6;
 }
 
-.codes{
-  /deep/.el-form-item__content{
+.codes {
+  /deep/.el-form-item__content {
     display: flex;
 
-    .el-input{
+    .el-input {
       width: 180px !important;
       > .el-input__inner {
-          width: 160px;
-        }
+        width: 160px;
+      }
     }
-    >.el-button{
-        width: 100px;
-        padding: 0;
+    > .el-button {
+      width: 100px;
+      padding: 0;
     }
   }
 }

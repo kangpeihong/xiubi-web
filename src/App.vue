@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-     <!-- <el-form ref="form" :model="userInfo">
+    <!-- <pro></pro> -->
+    <!-- <el-form ref="form" :model="userInfo">
         <el-form-item :rules="[
             {message: '请输入账号', trigger: 'blur' },
           ]">
@@ -106,7 +107,7 @@
       </div>
     </div> -->
       <div class="player">
-        <div class="player-name">
+        <!-- <div class="player-name">
           {{
             workshop == 1
               ? '车间1'
@@ -117,11 +118,14 @@
               : ''
           }}
         </div>
-        <div class="prism-player" id="player-con"></div>
+        <div class="prism-player" id="player-con"></div> -->
+
+        <!-- 新的video -->
+        <video height="600" id="video" controls></video>
       </div>
 
       <div class="player-2 player-init" @click="exchange(2)">
-        <div class="player-name">
+        <!-- <div class="player-name">
           {{
             workshop2 == 1
               ? '车间1'
@@ -132,11 +136,11 @@
               : ''
           }}
         </div>
-        <div class="prism-player" id="player-con2"></div>
+        <div class="prism-player" id="player-con2"></div> -->
       </div>
 
       <div class="player-3 player-init" @click="exchange(3)">
-        <div class="player-name">
+        <!-- <div class="player-name">
           {{
             workshop3 == 1
               ? '车间1'
@@ -147,7 +151,7 @@
               : ''
           }}
         </div>
-        <div class="prism-player" id="player-con3"></div>
+        <div class="prism-player" id="player-con3"></div> -->
       </div>
 
       <div class="footer"></div>
@@ -158,7 +162,6 @@
       <!-- 登陆页 -->
       <router-view />
     </div>
-
   </div>
 </template>
 <script
@@ -166,14 +169,14 @@
   charset="utf-8"
   src="https://g.alicdn.com/de/prismplayer/2.9.0/aliplayer-min.js"
 ></script>
-
 <script>
 import Bus from './utils/bus.js'
 import prolist from './views/productList'
 import publicMessage from './views/publicMessage'
 import mobileLogin from './mobile/mobileLogin'
 import mobileRegister from './mobile/mobileRegister'
-
+import Hls from './assets/js/hls'
+import pro from './mobile/commonAssembly/producList'
 export default {
   data () {
     return {
@@ -183,12 +186,12 @@ export default {
       },
       flag: null,
       videoUrl: './playVideo/video.html',
-      workshop: 1,
-      workshop2: 2,
-      workshop3: 3,
-      player1: '',
-      player2: '',
-      player3: '',
+      // workshop: 1,
+      // workshop2: 2,
+      // workshop3: 3,
+      // player1: '',
+      // player2: '',
+      // player3: '',
       userinfo: '',
       userArr: [
         // {
@@ -212,75 +215,74 @@ export default {
       ],
       currentNum: null,
       show: true,
-
-      video: {
-        id: 'player-con',
-        source: '',
-        width: '100%',
-        height: 'calc(100vh - 70px)',
-        autoplay: true,
-        isLive: false,
-        rePlay: true,
-        playsinline: true,
-        preload: true,
-        controlBarVisibility: 'hover',
-        useH5Prism: true,
-        skinLayout: [
-          {
-            name: 'controlBar',
-            align: 'blabs',
-            x: 0,
-            y: 0,
-            children: []
-          }
-        ]
-      },
-      video2: {
-        id: 'player-con2',
-        source: '',
-        width: '300px',
-        height: '300px',
-        autoplay: true,
-        isLive: false,
-        rePlay: true,
-        playsinline: true,
-        preload: true,
-        setVolume: 0,
-        controlBarVisibility: 'hover',
-        useH5Prism: true,
-        skinLayout: [
-          {
-            name: 'controlBar',
-            align: 'blabs',
-            x: 0,
-            y: 0,
-            children: []
-          }
-        ]
-      },
-      video3: {
-        id: 'player-con3',
-        source: '',
-        width: '300px',
-        height: '300px',
-        autoplay: true,
-        isLive: false,
-        rePlay: true,
-        playsinline: true,
-        preload: true,
-        setVolume: 0,
-        controlBarVisibility: 'hover',
-        useH5Prism: true,
-        skinLayout: [
-          {
-            name: 'controlBar',
-            align: 'blabs',
-            x: 0,
-            y: 0,
-            children: []
-          }
-        ]
-      },
+      // video: {
+      //   id: 'player-con',
+      //   source: '',
+      //   width: '100%',
+      //   height: 'calc(100vh - 70px)',
+      //   autoplay: true,
+      //   isLive: false,
+      //   rePlay: true,
+      //   playsinline: true,
+      //   preload: true,
+      //   controlBarVisibility: 'hover',
+      //   useH5Prism: true,
+      //   skinLayout: [
+      //     {
+      //       name: 'controlBar',
+      //       align: 'blabs',
+      //       x: 0,
+      //       y: 0,
+      //       children: []
+      //     }
+      //   ]
+      // },
+      // video2: {
+      //   id: 'player-con2',
+      //   source: '',
+      //   width: '300px',
+      //   height: '300px',
+      //   autoplay: true,
+      //   isLive: false,
+      //   rePlay: true,
+      //   playsinline: true,
+      //   preload: true,
+      //   setVolume: 0,
+      //   controlBarVisibility: 'hover',
+      //   useH5Prism: true,
+      //   skinLayout: [
+      //     {
+      //       name: 'controlBar',
+      //       align: 'blabs',
+      //       x: 0,
+      //       y: 0,
+      //       children: []
+      //     }
+      //   ]
+      // },
+      // video3: {
+      //   id: 'player-con3',
+      //   source: '',
+      //   width: '300px',
+      //   height: '300px',
+      //   autoplay: true,
+      //   isLive: false,
+      //   rePlay: true,
+      //   playsinline: true,
+      //   preload: true,
+      //   setVolume: 0,
+      //   controlBarVisibility: 'hover',
+      //   useH5Prism: true,
+      //   skinLayout: [
+      //     {
+      //       name: 'controlBar',
+      //       align: 'blabs',
+      //       x: 0,
+      //       y: 0,
+      //       children: []
+      //     }
+      //   ]
+      // },
       ifToken: false
     }
   },
@@ -288,10 +290,20 @@ export default {
     prolist,
     publicMessage,
     mobileLogin,
-    mobileRegister
+    mobileRegister,
+    pro
   },
 
   methods: {
+    GetQueryValue1 (queryName) {
+      var reg = new RegExp("(^|&)" + queryName + "=([^&]*)(&|$)", "i");
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null) {
+        return decodeURI(r[2]);
+      } else {
+        return null;
+      }
+    },
     isPhone () {
       if (
         navigator.userAgent.match(
@@ -439,38 +451,38 @@ export default {
           break
       }
     },
-    exchange (index) {
-      switch (index) {
-        case 2:
-          let url = this.video.source
-          let name = this.workshop
-          this.video.source = this.video2.source
-          this.video2.source = url
-          this.workshop = this.workshop2
-          this.workshop2 = name
-          this.player1.dispose()
-          this.player2.dispose()
-          this.replay(this.video, 1)
-          this.replay(this.video2, 2)
-          break
-        case 3:
-          let urls = this.video.source
-          let names = this.workshop
-          this.video.source = this.video3.source
-          this.video3.source = urls
-          this.workshop = this.workshop3
-          this.workshop3 = names
-          this.player1.dispose()
-          this.player3.dispose()
-          this.replay(this.video, 1)
-          this.replay(this.video3, 3)
-      }
-    }
+    // exchange (index) {
+    //   switch (index) {
+    //     case 2:
+    //       let url = this.video.source
+    //       let name = this.workshop
+    //       this.video.source = this.video2.source
+    //       this.video2.source = url
+    //       this.workshop = this.workshop2
+    //       this.workshop2 = name
+    //       this.player1.dispose()
+    //       this.player2.dispose()
+    //       this.replay(this.video, 1)
+    //       this.replay(this.video2, 2)
+    //       break
+    //     case 3:
+    //       let urls = this.video.source
+    //       let names = this.workshop
+    //       this.video.source = this.video3.source
+    //       this.video3.source = urls
+    //       this.workshop = this.workshop3
+    //       this.workshop3 = names
+    //       this.player1.dispose()
+    //       this.player3.dispose()
+    //       this.replay(this.video, 1)
+    //       this.replay(this.video3, 3)
+    //   }
+    // }
   },
   created () {
     // this.getUrl()
     this.isPhone();
-    console.log('flag', this.flag);
+    // console.log('flag', this.flag);
 
 
     this.getinfo()
@@ -482,7 +494,8 @@ export default {
     })
   },
   mounted () {
-    this.getparter(), this.getplay()
+    this.getparter()
+    // this.getplay()
     let token = sessionStorage.getItem('user-token')
 
     if (token !== '' && token !== null) {
@@ -490,11 +503,34 @@ export default {
     } else {
       this.ifToken = false
     }
+
+
+
+    if (!this.flag) {
+      var pathName = "A00168";
+      var video = document.getElementById('video');
+      if (Hls.isSupported()) {
+        var hls = new Hls({
+          debug: true,
+        });
+        hls.loadSource('https://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+          video.muted = false;
+          video.play();
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = 'http://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8';
+        video.addEventListener('canplay', function () {
+          video.play();
+        });
+      }
+    }
+
   }
 }
 </script>
 <style lang="less" scoped>
-
 // #app{
 //   background: #ccc;
 // }
@@ -668,4 +704,36 @@ body {
   }
 }
 
+video::-webkit-media-controls-play-button {
+  display: none;
+}
+video::-webkit-media-controls-timeline {
+  display: none;
+}
+video::-webkit-media-controls-current-time-display {
+  display: none;
+}
+video::-webkit-media-controls-time-remaining-display {
+  display: none;
+}
+video::-webkit-media-controls-mute-button {
+  display: none;
+}
+video::-webkit-media-controls-toggle-closed-captions-button {
+  display: none;
+}
+video::-webkit-media-controls-volume-slider {
+  display: none;
+}
+video::-webkit-media-controls-enclosure {
+  display: none;
+}
+.player{
+  background:#000;
+}
+#video {
+  height: calc(100vh - 70px);
+  margin: 0 auto;
+  display:block;
+}
 </style>

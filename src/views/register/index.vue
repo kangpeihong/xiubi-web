@@ -248,7 +248,7 @@ export default {
         }],
       },
       vsb: true,
-      active: 0
+      active: 2
     };
   },
   created() {
@@ -380,6 +380,7 @@ export default {
     },
     next() {
       if (this.active == 0) {
+        debugger
         this.$refs.form0.validate(valid => {
           if (valid && this.ifnumber) {
             if (this.vcode == "") {
@@ -394,7 +395,8 @@ export default {
                 }
               })
                 .then(res => {
-                  console.log("rrr", res);
+					        debugger
+                  console.log("rrr1122222", res);
                   this.active++;
                 })
                 .catch(err => {

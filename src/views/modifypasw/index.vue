@@ -25,7 +25,7 @@ export default {
         this.$message('密码不能为空')
         return
       }
-      const id = JSON.parse(window.sessionStorage.getItem('user-token')).xwEnterpriseDTO.id
+      const id = JSON.parse(window.sessionStorage.getItem('user-token')).enterpriseUserDTO.id
       console.log(id)
       this.$axios({
         method: 'put',

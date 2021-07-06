@@ -9,6 +9,4 @@
   window.onresize = function() {
     setRem()
   }
-
-  console.log('1342')
 })()

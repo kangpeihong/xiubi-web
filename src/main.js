@@ -14,7 +14,6 @@ import request from './assets/js/request'
 import api from './assets/js/api'
 import Vant from 'vant'
 import 'vant/lib/index.css'
-
 import VueLazyLoad from 'vue-lazyload' // 懒加载
 // import Viewer from 'v-viewer'
 

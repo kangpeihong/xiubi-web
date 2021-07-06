@@ -21,17 +21,15 @@
                 v-model="changePassword"
                 placeholder="请输入修改后的密码"
               ></el-input>
-              <el-input
-                v-model="checkPassword"
-                placeholder="请再次确认密码"
-              ></el-input>
-              <el-button type="primary">确认</el-button>
+              <el-button type="primary" @click="changePasswords"
+                >确认</el-button
+              >
             </div>
           </div>
         </van-overlay>
       </div>
 
-      <div class="loginOut">退出</div>
+      <div class="loginOut" @click="loginOut">退出</div>
     </div>
 
     <!-- 右侧控制菜单 -->
@@ -86,7 +84,6 @@ export default {
     return {
       show: false,
       changePassword: '',
-      checkPassword: '',
       title: {
         name: '首页',
         status: false,
@@ -106,7 +103,6 @@ export default {
   },
   methods: {
     scroll (index, refname) {
-
       switch (index) {
         case 1:
           let top1 = this.$refs.public.offsetTop
@@ -126,9 +122,29 @@ export default {
           break;
       }
     },
+    // 修改密码
+    changePasswords () {
+      if (this.changePassword !== '') {
+        const id = JSON.parse(sessionStorage.getItem('user-token')).enterpriseUserDTO.id;
+        console.log('id', id);
+        this.$request.put(this.$api.changePassword, { id: id, pass: this.changePassword }).then(res => {
+          sessionStorage.removeItem('user-token')
+          this.$toast('修改成功，请重新登陆')
+          window.location.reload();
+        }).catch(err => {
+          console.log('err', err);
+        })
+      } else {
+        this.$toast('密码不能为空！')
+      }
+    },
     historyPages () {
       this.$router.push('/historyPage')
-
+    },
+    // 退出登陆
+    loginOut () {
+      sessionStorage.removeItem('user-token')
+      window.location.reload()
     }
 
   },
