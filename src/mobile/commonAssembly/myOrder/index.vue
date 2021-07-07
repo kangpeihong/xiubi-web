@@ -1,7 +1,7 @@
 <template>
   <div>
     <navBar :title="title"></navBar>
-    123-123-123
+    123-123-123-345
   </div>
 </template>
 
