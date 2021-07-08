@@ -363,6 +363,8 @@ export default {
         item.totalprice = item.orderNumber * item.price;
         this.totalPrice += parseFloat(item.totalprice);
       });
+      console.log('dadsfasdsfasdfdasf',this.proList);
+      
       // } else {
       //   this.proList = JSON.parse(orderInfo).data.data.orderDetails
       // }

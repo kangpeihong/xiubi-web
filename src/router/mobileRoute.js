@@ -5,6 +5,7 @@ const register = () => import('../mobile/mobileRegister')
 const mobileIndex = () => import('../mobile/mobileIndex')
 const historyPage = () => import('../mobile/commonAssembly/historyPage')
 const myOrder = () => import('../mobile/commonAssembly/myOrder')
+const changePage = () => import('../mobile/commonAssembly/changePage')
 
 const mobileRoutes = [
   {
@@ -31,6 +32,11 @@ const mobileRoutes = [
     path: '/myOrder',
     name: 'myOrder',
     component: myOrder,
+  },
+  {
+    path: '/changePage',
+    name: 'changePage',
+    component: changePage,
   },
 ]
 
