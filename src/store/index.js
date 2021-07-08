@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userId: '',
     loginShow: true,
     registerShow: false, //注册页面开关
     findNumber: false,

@@ -129,6 +129,7 @@ export default {
       })
       console.log('44444',checkNumber);
       if(checkNumber.length >0){
+        sessionStorage.setItem('orderInfo',JSON.stringify(checkNumber))
         this.$router.push('/myOrder')
       }else{
         this.$toast('请选择购买产品数量')
