@@ -136,7 +136,6 @@ router.beforeEach((to, from, next) => {
   // 2.非登录页面 ，需要校验
 
   const token = window.sessionStorage.getItem('user-token')
-
   if (token) {
     next()
   } else {

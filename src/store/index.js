@@ -16,11 +16,18 @@ export default new Vuex.Store({
     billOrAddress: sessionStorage.getItem('billOrAddress')
       ? JSON.parse(sessionStorage.getItem('billOrAddress'))
       : '',
-    indexs: 0,
+    indexs: sessionStorage.getItem('indexs')
+      ? JSON.parse(sessionStorage.getItem('indexs'))
+      : 0,
     // back: false,
-    addressIndex: 0,
+    addressIndex: sessionStorage.getItem('addressIndex')
+      ? JSON.parse(sessionStorage.getItem('addressIndex'))
+      : 0,
     menuLeft: false,
     menuRight: false,
+    redioActive: sessionStorage.getItem('redioActive')
+      ? JSON.parse(sessionStorage.getItem('redioActive'))
+      : 0,
   },
   mutations: {
     setMenuLeft(state, data) {

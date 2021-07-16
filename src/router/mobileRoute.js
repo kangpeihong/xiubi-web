@@ -9,6 +9,10 @@ const changePage = () => import('../mobile/commonAssembly/changePage')
 
 const mobileRoutes = [
   {
+    path: '/',
+    redirect: '/login',
+  },
+  {
     path: '/login',
     name: 'login',
     component: login,

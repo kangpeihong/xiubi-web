@@ -124,6 +124,7 @@ export default {
     },
     del(index) {
       console.log("dele", this.companyInfo[index]);
+      console.log("dele", this.companyInfo[index].id);
 
       let id = this.companyInfo[index].id;
 

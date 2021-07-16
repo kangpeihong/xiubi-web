@@ -426,6 +426,8 @@ export default {
         console.log("vaild", vaild);
         let datas = this.$route.query.datas;
 
+        console.log('klklklklklklklk',datas);
+        
         this.postAddress.enterpriseUser.id = info.enterpriseUserDTO.id;
         console.log("vaild", this.postAddress);
 
