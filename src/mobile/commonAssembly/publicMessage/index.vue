@@ -19,7 +19,6 @@ export default {
       msg: '',
       info:null,
       publicTime:null,
-      expressData:null,
     }
   },
   created () {
@@ -33,10 +32,7 @@ export default {
       this.publicTime = res.data.dateTime; 
     });
 
-    // 发货信息
-    this.$request.get(this.$api.publicMessage).then(res => {
-      this.expressData = res.data;
-    });
+   
   },
   computed: {
   },

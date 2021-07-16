@@ -373,11 +373,6 @@ export default {
             break;
         }
       }
-
-
-
-
-
     },
     // 注册
     registerBtn () {

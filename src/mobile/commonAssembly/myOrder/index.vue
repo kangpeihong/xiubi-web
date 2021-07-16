@@ -273,6 +273,7 @@ export default {
         params:{title:'发票信息'}
       })
       this.$store.state.billOrAddress = true;
+      sessionStorage.setItem('billOrAddress', JSON.stringify(true))
     }
   },
 }

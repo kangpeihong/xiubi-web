@@ -198,6 +198,7 @@ export default {
         
         window.sessionStorage.setItem("user-token", JSON.stringify(res.data));
         this.$store.state.userId = res.data.enterpriseUserDTO.id;
+        sessionStorage.setItem("user-id", JSON.stringify(res.data.enterpriseUserDTO.id))
         this.$toast.success('登陆成功');
         this.$router.push('/mobileIndex')
       }).catch(err => {

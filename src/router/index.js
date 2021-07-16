@@ -106,7 +106,10 @@ router.beforeEach((to, from, next) => {
   window.addEventListener('load', function() {
     // 移动端跳转页面
     if (ifPhoneStatus) {
-      next('/login')
+      if (to.path === '/login') {
+        next()
+        // 列表页面的路由
+      }
     } else {
       if (
         to.path === '/login' ||
