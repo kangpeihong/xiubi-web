@@ -70,6 +70,7 @@
                 oninput="if(value.length>5)value=value.slice(0,6)"
                 onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
                 placeholder="请输入数量"
+                @blur="inputBtn(item.productPrices, index,item.moq)"
               />
             </div>
             <div class="describe" :title="item.productDesc" v-show="priceShow">
@@ -136,6 +137,7 @@
                   oninput="if(value.length>5)value=value.slice(0,6)"
                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
                   placeholder="请输入数量"
+                  @blur="inputBtn(item.productPrices, index,item.moq)"
                 />
               </div>
             </div>
