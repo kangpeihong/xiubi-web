@@ -74,16 +74,16 @@
         <van-row class="invoice-message">
           <van-col span="12">收货人信息</van-col>
           <van-col span="8" offset="4">
-            <van-button type="info">选择</van-button>
+            <van-button type="info" @click="receiptChange()">选择</van-button>
           </van-col>
         </van-row>
         <van-row class="invoice-info" v-if="receiptMessage">
           <van-col span="24">
-            {{ receiptMessage[indexs].address }}
+            {{ receiptMessage[addressIndex].address }}
           </van-col>
           <van-col span="24">
-            {{ receiptMessage[indexs].name }}
-            {{ receiptMessage[indexs].phone }}
+            {{ receiptMessage[addressIndex].name }}
+            {{ receiptMessage[addressIndex].phone }}
           </van-col>
         </van-row>
       </div>
@@ -272,8 +272,26 @@ export default {
         name:'changePage',
         params:{title:'发票信息'}
       })
+      sessionStorage.setItem('invoiceTitle', '发票信息')
       this.$store.state.billOrAddress = true;
       sessionStorage.setItem('billOrAddress', JSON.stringify(true))
+      console.log('iiiiiiii',this.indexs);
+      this.$store.state.redioActive = this.indexs
+      sessionStorage.setItem('redioActive', JSON.stringify(this.indexs))
+      
+    },
+    // 收货信息页面
+    receiptChange(){
+      this.$router.push({
+        name:'changePage',
+        params:{title:'收货'}
+      })
+      sessionStorage.setItem('invoiceTitle', '收货信息')
+      this.$store.state.billOrAddress = false;
+      sessionStorage.setItem('billOrAddress', JSON.stringify(false))
+      this.$store.state.redioActive = this.addressIndex
+      sessionStorage.setItem('redioActive', JSON.stringify(this.addressIndex))
+
     }
   },
 }
