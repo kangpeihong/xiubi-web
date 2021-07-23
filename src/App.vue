@@ -265,6 +265,7 @@ export default {
 
     },
     getVideo (roomNo, videoId) {
+      let a= 1;
       let that = this;
       var pathName = roomNo;
       var video = document.getElementById(videoId);
