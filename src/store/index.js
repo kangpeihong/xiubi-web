@@ -5,6 +5,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    tokenStatus: sessionStorage.getItem('tokenStatus')
+      ? JSON.parse(sessionStorage.getItem('tokenStatus'))
+      : false, //登陆状态
     userId: sessionStorage.getItem('user-id')
       ? JSON.parse(sessionStorage.getItem('user-id'))
       : '',

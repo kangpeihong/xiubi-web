@@ -1,64 +1,33 @@
 <template>
   <div id="app">
-    <!-- <pro></pro> -->
-    <!-- <el-form ref="form" :model="userInfo">
-        <el-form-item :rules="[
-            {message: '请输入账号', trigger: 'blur' },
-          ]">
-          <el-input
-            v-model="userInfo.number"
-            placeholder="请输入账号"
-          ></el-input>
-        </el-form-item>
-        <el-form-item  prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]">
-          <el-input
-            v-model="userInfo.password"
-            placeholder="请输入密码"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button>登陆</el-button>
-        </el-form-item>
-      </el-form> -->
     <div v-if="!flag">
       <div class="nav-list">
-        <!-- <div>
-        <img src="./assets/images/logoo.png" alt="" class="logo">
-      </div> -->
         <div class="login" v-if="show">
-          <!-- <router-link to="/login"  @click="loginUser">登录</router-link> <span class="sbox"></span>
-       -->
-          <!-- <router-link to="/register">注册</router-link> -->
-
           <span @click="loginUser">
             <span class="iconfont icon-denglu login-user"></span>
-
-            登录</span
-          ><span class="sbox"></span>
+            登录
+          </span>
+          <span class="sbox"></span>
           <span @click="register">
             <span class="iconfont icon-zhuce"></span>
-            注册</span
-          >
+            注册
+          </span>
         </div>
         <div class="login login-left" v-if="!show">
           <el-avatar
             :size="25"
             src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-          >
-          </el-avatar>
+          ></el-avatar>
           <span class="sbox"></span>
 
           <el-dropdown>
-            <span class="userinfo"
-              >{{ userinfo }}<i class="el-icon-arrow-down el-icon--right"></i
-            ></span>
+            <span class="userinfo">
+              {{ userinfo }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="history"
-                >历史订单</el-dropdown-item
-              >
-              <el-dropdown-item @click.native="modifyPass"
-                >修改密码</el-dropdown-item
-              >
+              <el-dropdown-item @click.native="history">历史订单</el-dropdown-item>
+              <el-dropdown-item @click.native="modifyPass">修改密码</el-dropdown-item>
               <el-dropdown-item @click.native="loginOut">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -67,14 +36,14 @@
 
       <div class="hpicture">
         <div
-          v-for="(item, index) in userArr"
-          :key="item.id"
-          class="user-head"
           :class="index === currentNum ? 'active' : ''"
+          :key="item.id"
           @mouseenter="currentInfo(index)"
           @mouseleave="hide()"
+          class="user-head"
+          v-for="(item, index) in userArr"
         >
-          <img :src="item.headAddress" alt="" />
+          <img :src="item.headAddress" alt />
           <div v-show="ifToken">
             <p>{{ item.name }}</p>
             <p>{{ item.jobs }}</p>
@@ -87,78 +56,39 @@
 
       <router-view />
 
-      <!-- <keep-alive>
-      <router-view v-if='$route.meta.keepAlive'/>
-    </keep-alive> -->
-
       <prolist v-on:open-list="this.$router.push('/')"></prolist>
 
-      <!-- <div class="info">
-      <h4>北京·密云</h4>
-      <p>北京修文印刷技术有限公司</p>
-      <p>单色印刷车间</p>
-      <p>孙恒文<i class="el-icon-arrow-down el-icon--right"></i></p>
-      <p>{{time}}</p>
-      <div style="display:none">
-        <p>机长,企业投资人,生产主管</p>
-      <p>手机:18911629068</p>
-      <p>微信:18911629068</p>
-      <p>QQ:583895185</p>
-      </div>
-    </div> -->
       <div class="player">
-        <!-- <div class="player-name">
-          {{
-            workshop == 1
-              ? '车间1'
-              : workshop == 2
-              ? '车间2'
-              : workshop == 3
-              ? '车间3'
-              : ''
-          }}
-        </div>
-        <div class="prism-player" id="player-con"></div> -->
-
-        <!-- 新的video -->
-        <video height="600" id="video" controls></video>
+        <!-- <div class="title">车间一</div> -->
+        <video autoplay="autoplay" controls="controls" id="video" muted preload="auto"></video>
       </div>
 
-      <div class="player-2 player-init" @click="exchange(2)">
-        <!-- <div class="player-name">
-          {{
-            workshop2 == 1
-              ? '车间1'
-              : workshop2 == 2
-              ? '车间2'
-              : workshop2 == 3
-              ? '车间3'
-              : ''
-          }}
-        </div>
-        <div class="prism-player" id="player-con2"></div> -->
+      <!-- 车间直播视屏选择 -->
+      <div @mouseleave="mouseLeave" class="changePlayer animated" ref="changePlayer">
+        <div
+          :id="'video'+item.id"
+          :key="index"
+          @click="changeVideo(item,index)"
+          class="workSpace"
+          v-for="(item,index) in videoData"
+        >{{item.roomName}}</div>
       </div>
 
-      <div class="player-3 player-init" @click="exchange(3)">
-        <!-- <div class="player-name">
-          {{
-            workshop3 == 1
-              ? '车间1'
-              : workshop3 == 2
-              ? '车间2'
-              : workshop3 == 3
-              ? '车间3'
-              : ''
-          }}
-        </div>
-        <div class="prism-player" id="player-con3"></div> -->
+      <!-- 提示箭头 -->
+
+      <div @mouseenter="arrow()" class="arrow" ref="arrow">
+        <span style="width:40px;display: block;margin-right:-15px">
+          <van-icon class="move ar-animated ar-delay-2s" name="arrow" />
+          <van-icon class="move ar-animated ar-delay-1s" name="arrow" />
+          <van-icon class="move ar-animated" name="arrow" />
+        </span>
       </div>
 
-      <div class="footer"></div>
+      <!-- <div class="footer"></div> -->
     </div>
 
     <!-- 移动端开始 -->
-    <div class="" v-else>
+    <div class v-else>
       <!-- 登陆页 -->
       <router-view />
     </div>
@@ -186,104 +116,14 @@ export default {
       },
       flag: null,
       videoUrl: './playVideo/video.html',
-      // workshop: 1,
-      // workshop2: 2,
-      // workshop3: 3,
-      // player1: '',
-      // player2: '',
-      // player3: '',
       userinfo: '',
-      userArr: [
-        // {
-        //   img: require('./assets/images/mersi.jpg'),
-        //   name: '里奥梅西',
-        //   part: '运营实施',
-        //   phoneNum: 17611301761
-        // },
-        // {
-        //   img: require('./assets/images/suyaleis.jpg'),
-        //   name: '苏亚雷斯',
-        //   part: '美工修图',
-        //   phoneNum: 17611301761
-        // },
-        // {
-        //   img: require('./assets/images/nmr.jpg'),
-        //   name: '内马尔',
-        //   part: '打包发货',
-        //   phoneNum: 17611301761
-        // }
-      ],
+      userArr: [],
       currentNum: null,
       show: true,
-      // video: {
-      //   id: 'player-con',
-      //   source: '',
-      //   width: '100%',
-      //   height: 'calc(100vh - 70px)',
-      //   autoplay: true,
-      //   isLive: false,
-      //   rePlay: true,
-      //   playsinline: true,
-      //   preload: true,
-      //   controlBarVisibility: 'hover',
-      //   useH5Prism: true,
-      //   skinLayout: [
-      //     {
-      //       name: 'controlBar',
-      //       align: 'blabs',
-      //       x: 0,
-      //       y: 0,
-      //       children: []
-      //     }
-      //   ]
-      // },
-      // video2: {
-      //   id: 'player-con2',
-      //   source: '',
-      //   width: '300px',
-      //   height: '300px',
-      //   autoplay: true,
-      //   isLive: false,
-      //   rePlay: true,
-      //   playsinline: true,
-      //   preload: true,
-      //   setVolume: 0,
-      //   controlBarVisibility: 'hover',
-      //   useH5Prism: true,
-      //   skinLayout: [
-      //     {
-      //       name: 'controlBar',
-      //       align: 'blabs',
-      //       x: 0,
-      //       y: 0,
-      //       children: []
-      //     }
-      //   ]
-      // },
-      // video3: {
-      //   id: 'player-con3',
-      //   source: '',
-      //   width: '300px',
-      //   height: '300px',
-      //   autoplay: true,
-      //   isLive: false,
-      //   rePlay: true,
-      //   playsinline: true,
-      //   preload: true,
-      //   setVolume: 0,
-      //   controlBarVisibility: 'hover',
-      //   useH5Prism: true,
-      //   skinLayout: [
-      //     {
-      //       name: 'controlBar',
-      //       align: 'blabs',
-      //       x: 0,
-      //       y: 0,
-      //       children: []
-      //     }
-      //   ]
-      // },
-      ifToken: false
+      ifToken: false,
+      videoData: [],
+      videoOne: null,
+      loading: true,
     }
   },
   components: {
@@ -294,7 +134,159 @@ export default {
     pro
   },
 
+
+  created () {
+    this.isPhone();
+    this.getinfo()
+    Bus.$on('change', e => {
+      console.log('vvvv', e)
+      if (e.userName !== null) {
+        this.userinfo = e.userName
+      }
+    })
+  },
+  mounted () {
+    this.getparter()
+    this.openListBtn()
+    // this.$nextTick(() => {
+    //   this.getplay()
+    // })
+    let token = sessionStorage.getItem('user-token')
+
+    if (token !== '' && token !== null) {
+      this.ifToken = true
+    } else {
+      this.ifToken = false
+    }
+
+
+
+    if (!this.flag) {
+      this.getplay()
+
+      // this.getVideo('A00168', 'video')
+      /* var pathName = "A00168";
+      var video = document.getElementById('video');
+      if (Hls.isSupported()) {
+        var hls = new Hls({
+          debug: true,
+        });
+        hls.loadSource('https://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+          // video.muted = true;
+          video.play();
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = 'http://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8';
+        video.addEventListener('canplay', function () {
+          video.play();
+        });
+      } */
+    }
+
+
+
+  },
+  updated () {
+    // this.videoData.forEach((item, index) => {
+    //   this.getVideo(item.roomNo, `video${item.id}`)
+    // })
+
+  },
+  beforeDestroy () {
+
+  },
   methods: {
+    openListBtn () {
+      console.log('right', this.$refs.prolist);
+
+      setTimeout(() => {
+        this.$refs.changePlayer.classList.add('changeVideoBlock');
+        this.$refs.changePlayer.classList.add('heartBeat');
+      }, 2000)
+
+      setTimeout(() => {
+        this.$refs.changePlayer.classList.remove('heartBeat');
+        this.$refs.changePlayer.classList.add('bounceOutRight');
+        // this.$refs.changePlayer.classList.remove('rightBlock');
+      }, 3000)
+
+      setTimeout(() => {
+        this.$refs.changePlayer.classList.remove('changeVideoBlock');
+        this.$refs.arrow.classList.add('arrowBlock');
+      }, 4000)
+
+
+    },
+    arrow () {
+      this.$refs.arrow.classList.remove('arrowBlock');
+      this.$refs.changePlayer.classList.remove('bounceOutRight');
+      this.$refs.changePlayer.classList.add('bounceInRight');
+
+      this.$refs.changePlayer.classList.add('changeVideoBlock');
+      console.log('x,y', event);
+
+      var x = window.event.clientX;
+      var y = window.event.clientY;
+      console.log('x,y', x, y);
+
+    },
+    mousemove () {
+      var x = window.event.clientX;
+      var y = window.event.clientY;
+      var divx1 = this.$refs.changePlayer.offsetLeft;
+      var divy1 = this.$refs.changePlayer.offsetTop;
+      var divx2 = this.$refs.changePlayer.offsetLeft + this.$refs.changePlayer.offsetWidth;
+      var divy2 = this.$refs.changePlayer.offsetTop + this.$refs.changePlayer.offsetHeight;
+      // this.$refs.changePlayer
+      console.log('this.$refs.changePlayer.offsetLeft', this.$refs.changePlayer.offsetLeft);
+
+    },
+    mouseLeave () {
+      this.$refs.arrow.classList.add('arrowBlock');
+      this.$refs.changePlayer.classList.add('bounceOutRight');
+    },
+    changeVideo (item, index) {
+      let middleValue = JSON.parse(JSON.stringify(this.videoOne));
+      this.videoOne = item
+      this.videoData[index] = middleValue;
+      this.getVideo(item.roomNo, 'video')
+      this.$forceUpdate()
+    },
+    getplay () {
+
+      this.$request.get(this.$api.videoUrl).then(res => {
+        this.videoOne = res.data.shift()
+        this.videoData = res.data
+        this.getVideo(this.videoOne.roomNo, 'video')
+
+      })
+
+    },
+    getVideo (roomNo, videoId) {
+      let that = this;
+      var pathName = roomNo;
+      var video = document.getElementById(videoId);
+      if (Hls.isSupported()) {
+        var hls = new Hls({
+          debug: true,
+        });
+        hls.loadSource('https://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+          video.muted = true;
+          video.play();
+
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = 'http://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8';
+        video.addEventListener('canplay', function () {
+          video.play();
+        });
+      }
+
+    },
     GetQueryValue1 (queryName) {
       var reg = new RegExp("(^|&)" + queryName + "=([^&]*)(&|$)", "i");
       var r = window.location.search.substr(1).match(reg);
@@ -326,25 +318,6 @@ export default {
       this.$router.push('/register').catch(() => { })
       this.$store.state.registerShow = true
     },
-    // getUrl () {
-    //   this.$axios
-    //     .post(
-    //       'https://open.ys7.com/api/lapp/token/get?appKey=e91574b23c344e858ab96f8d60294ae9&appSecret=ca09a52e43fcebae1a1819676b80250c',
-    //       {
-    //         headers: {}
-    //       }
-    //     )
-    //     .then(res => {
-    //       console.log(res, 1)
-    //       this.accessToken = res.data.accessToken
-    //       this.videoUrl =
-    //         'https://open.ys7.com/ezopen/h5/iframe?url=ezopen://EXPRVK@open.ys7.com/D44345285/1.hd.live&autoplay=1&accessToken=' +
-    //         res.data.data.accessToken
-    //     })
-    //     .catch(err => {
-    //       console.log(err, '请求失败')
-    //     })
-    // },
     //修改密码
     modifyPass () {
       this.$router.push('/modify')
@@ -356,7 +329,6 @@ export default {
         if (token.enterpriseUserDTO.userName !== null) {
           this.userinfo = token.enterpriseUserDTO.userName
         }
-        // console.log("2332543434", this.userinfo);
       }
     },
     loginOut () {
@@ -399,135 +371,10 @@ export default {
     hide () {
       this.currentNum = null
     },
-    getplay () {
-      this.$axios({
-        method: 'get',
-        url: '/api/room/1001'
-      }).then(res => {
-        // this.video.source = res.data.roomAddress + res.data.roomNo;
-        this.video.source =
-          'https://www.xiubi.com.cn/group1/M00/00/02/rBH8OWBcOcGAUvbnbFRSneUPKTs436.MOV'
-        // console.log("112", this.video.source);
-        this.player1 = new Aliplayer(this.video, function (player) {
-          console.log('The player is created')
-        })
 
-        this.video2.source = '//player.alicdn.com/video/aliyunmedia.mp4'
-        // console.log("112", this.video.source);
-        this.player2 = new Aliplayer(this.video2, function (player) {
-          console.log('The player is created222')
-          player.setVolume(0)
-        })
 
-        this.video3.source = '//player.alicdn.com/video/aliyunmedia.mp4'
-        // console.log("112", this.video.source);
-        this.player3 = new Aliplayer(this.video3, function (player) {
-          player.setVolume(0)
-
-          console.log('The player is created222')
-        })
-      })
-    },
-    replay (video, type) {
-      switch (type) {
-        case 1:
-          this.player1 = new Aliplayer(video, function (player) {
-            console.log('The player is created22')
-          })
-          break
-
-        case 2:
-          this.player2 = new Aliplayer(video, function (player) {
-            console.log('The player is created22')
-            player.setVolume(0)
-          })
-          break
-
-        case 3:
-          this.player3 = new Aliplayer(video, function (player) {
-            console.log('The player is created22')
-            player.setVolume(0)
-          })
-          break
-      }
-    },
-    // exchange (index) {
-    //   switch (index) {
-    //     case 2:
-    //       let url = this.video.source
-    //       let name = this.workshop
-    //       this.video.source = this.video2.source
-    //       this.video2.source = url
-    //       this.workshop = this.workshop2
-    //       this.workshop2 = name
-    //       this.player1.dispose()
-    //       this.player2.dispose()
-    //       this.replay(this.video, 1)
-    //       this.replay(this.video2, 2)
-    //       break
-    //     case 3:
-    //       let urls = this.video.source
-    //       let names = this.workshop
-    //       this.video.source = this.video3.source
-    //       this.video3.source = urls
-    //       this.workshop = this.workshop3
-    //       this.workshop3 = names
-    //       this.player1.dispose()
-    //       this.player3.dispose()
-    //       this.replay(this.video, 1)
-    //       this.replay(this.video3, 3)
-    //   }
-    // }
   },
-  created () {
-    // this.getUrl()
-    this.isPhone();
-    // console.log('flag', this.flag);
 
-
-    this.getinfo()
-    Bus.$on('change', e => {
-      console.log('vvvv', e)
-      if (e.userName !== null) {
-        this.userinfo = e.userName
-      }
-    })
-  },
-  mounted () {
-    this.getparter()
-    // this.getplay()
-    let token = sessionStorage.getItem('user-token')
-
-    if (token !== '' && token !== null) {
-      this.ifToken = true
-    } else {
-      this.ifToken = false
-    }
-
-
-
-    if (!this.flag) {
-      var pathName = "A00168";
-      var video = document.getElementById('video');
-      if (Hls.isSupported()) {
-        var hls = new Hls({
-          debug: true,
-        });
-        hls.loadSource('https://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8');
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-          video.muted = false;
-          video.play();
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = 'http://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8';
-        video.addEventListener('canplay', function () {
-          video.play();
-        });
-      }
-    }
-
-  }
 }
 </script>
 <style lang="less" scoped>
@@ -554,20 +401,30 @@ html {
 body {
   position: relative;
 }
-
+#app {
+  position: relative;
+  overflow-x: hidden;
+}
 .nav-list {
   height: 35px;
-  background: #000;
-  padding: 0 55px;
+  background: transparent;
+  padding: 10px 55px;
+  box-sizing: border-box;
   display: flex;
+  width: 100%;
+  top: 0;
   // justify-content: space-between;
+  position: absolute;
 }
 .player {
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100vh;
   *zoom: 1;
   position: relative;
   z-index: -1;
+  > .title {
+    color: #ffffff;
+  }
 }
 
 // z-index: -1;
@@ -728,12 +585,105 @@ video::-webkit-media-controls-volume-slider {
 video::-webkit-media-controls-enclosure {
   display: none;
 }
-.player{
-  background:#000;
+.player {
+  background: #000;
 }
 #video {
-  height: calc(100vh - 70px);
+  height: 100vh;
   margin: 0 auto;
-  display:block;
+  display: block;
+}
+.changePlayer {
+  position: absolute;
+  top: 30%;
+  right: 0px;
+  display: none;
+  .workSpace {
+    background: #ffffff;
+    width: 80px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+  }
+}
+@keyframes move {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  50% {
+    left: 50%;
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+.move {
+  -webkit-animation-name: move;
+  animation-name: move;
+  position: relative;
+  margin-left: -25px;
+  font-size: 15px;
+  color: #fff;
+}
+.ar-animated {
+  -webkit-animation-duration: 1.5s;
+  animation-duration: 1.5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  font-style: inherit;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+}
+.ar-delay-1s {
+  animation-delay: 0.1s;
+}
+.ar-delay-2s {
+  animation-delay: 0.2s;
+}
+.ar-delay-3s {
+  animation-delay: 0.3s;
+}
+.ar-delay-4s {
+  animation-delay: 0.4s;
+}
+.ar-delay-5s {
+  animation-delay: 0.5s;
+}
+.ar-delay-6s {
+  animation-delay: 0.6s;
+}
+.ar-delay-7s {
+  animation-delay: 0.7s;
+}
+.ar-delay-8s {
+  animation-delay: 0.8s;
+}
+.ar-delay-9s {
+  animation-delay: 0.9s;
+}
+.ar-delay-10s {
+  animation-delay: 0.1s;
+}
+.arrow {
+  position: fixed;
+  width: 80px;
+  display: none;
+  right: 25px;
+  top: 30%;
+  text-align: right;
+}
+
+.arrowBlock {
+  display: block !important;
+}
+.changeVideoBlock {
+  display: block !important;
 }
 </style>

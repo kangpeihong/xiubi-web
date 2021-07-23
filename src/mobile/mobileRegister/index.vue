@@ -1,6 +1,6 @@
 <template>
   <div class="reg">
-    <navBar :title="title"></navBar>
+    <!-- <navBar :title="title"></navBar> -->
 
     <div class="step">
       <van-steps :active="active" active-icon="success" active-color="#38f">

@@ -10,17 +10,20 @@ const changePage = () => import('../mobile/commonAssembly/changePage')
 const mobileRoutes = [
   {
     path: '/',
-    redirect: '/login',
+    redirect: '/mobileIndex',
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: login,
-  },
+  // {
+  //   path: '/login',
+  //   name: 'login',
+  //   component: login,
+  // },
   {
     path: '/mobileIndex',
     name: 'mobileIndex',
     component: mobileIndex,
+    meta: {
+      keepAlive: true,
+    },
   },
   {
     path: '/register',
