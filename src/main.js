@@ -16,7 +16,7 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 import VueLazyLoad from 'vue-lazyload' // 懒加载
 // import Viewer from 'v-viewer'
-
+import './utils/permission'
 import 'viewerjs/dist/viewer.css'
 
 import Print from 'vue-print-nb'
@@ -32,13 +32,38 @@ if (
   require('./utils/rem.js')
 } else {
 }
+
+window.onload = function() {
+  //ios禁止双击缩放
+  document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+      event.preventDefault()
+    }
+  })
+  var lastTouchEnd = 0
+  document.addEventListener(
+    'touchend',
+    function(event) {
+      var now = new Date().getTime()
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault()
+      }
+      lastTouchEnd = now
+    },
+    false
+  )
+  //ios禁止双指手势操作
+  document.addEventListener('gesturestart', function(event) {
+    event.preventDefault()
+  })
+}
+
 Vue.use(Vant)
 Vue.use(Print)
 Vue.use(animated)
 Vue.use(htmlToPdf)
 Vue.use(ElementUi)
 Vue.config.productionTip = false
-axios.defaults.baseURL = 'https://server.xiubi.com.cn:8000'
 Vue.prototype.$axios = axios
 Vue.prototype.$utils = utils
 Vue.prototype.$request = request

@@ -106,10 +106,10 @@ router.beforeEach((to, from, next) => {
   window.addEventListener('load', function() {
     // 移动端跳转页面
     if (ifPhoneStatus) {
-      if (to.path === '/login') {
-        next()
-        // 列表页面的路由
-      }
+      // if (to.path === '/login') {
+      //   next()
+      //   // 列表页面的路由
+      // }
     } else {
       if (
         to.path === '/login' ||
@@ -118,6 +118,13 @@ router.beforeEach((to, from, next) => {
       ) {
         next('/')
         // 列表页面的路由
+      }
+
+      const token = window.sessionStorage.getItem('user-token')
+      if (token) {
+        next()
+      } else {
+        next('/login')
       }
     }
   })
@@ -134,14 +141,16 @@ router.beforeEach((to, from, next) => {
   }
 
   // 2.非登录页面 ，需要校验
-
   const token = window.sessionStorage.getItem('user-token')
   if (token) {
     next()
   } else {
-    next('/login')
+    if (ifPhoneStatus) {
+      next()
+    } else {
+      next('/login')
+    }
   }
-
   //   router.beforeEach((to, from, next) => {
   //     // to将要访问的路径
   //     // from代表从哪个路径跳转而来

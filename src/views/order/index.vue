@@ -457,6 +457,7 @@ export default {
       this.arr.forEach(item => {
         item.detailsId = null;
       });
+            
       this.$confirm("提示", {
         title: "提示",
         message: "确认要提交订单吗？",

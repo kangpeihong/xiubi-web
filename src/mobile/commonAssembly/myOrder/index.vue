@@ -3,7 +3,7 @@
     <navBar :title="title"></navBar>
     <!-- 订单列表 -->
     <div class="order-box">
-      <div class="order-list" v-for="(item, index) in orderInfo" :key="index">
+      <div :key="index" class="order-list" v-for="(item, index) in orderInfo">
         <div class="order-list-item">
           <div class="name">名称:{{ item.product.productName }}</div>
           <div class="price">单价:{{ item.price }}元</div>
@@ -13,11 +13,11 @@
           <div class="number">
             <span>购买数量:</span>
             <van-stepper
-              v-model="item.orderNumber"
-              theme="round"
+              @change="step(item.orderNumber, item.product, index)"
               button-size="22"
               input-width="40px"
-              @change="step(item.orderNumber, item.product, index)"
+              theme="round"
+              v-model="item.orderNumber"
             />
           </div>
           <div class="unit">单位:{{ item.product.productUnits }}</div>
@@ -32,13 +32,7 @@
       <div class="note">
         <div>备注:</div>
         <div>
-          <van-field
-            v-model="message"
-            rows="1"
-            autosize
-            type="textarea"
-            placeholder="请输入备注"
-          />
+          <van-field autosize placeholder="请输入备注" rows="1" type="textarea" v-model="message" />
         </div>
       </div>
     </div>
@@ -47,8 +41,8 @@
       <div>
         <van-row class="invoice-message">
           <van-col span="12">发票信息</van-col>
-          <van-col span="8" offset="4">
-            <van-button type="info" @click="invoiceChange">选择</van-button>
+          <van-col offset="4" span="8">
+            <van-button @click="invoiceChange" type="info">选择</van-button>
           </van-col>
         </van-row>
         <van-row class="invoice-info" v-if="companyInvoice">
@@ -73,14 +67,12 @@
       <div>
         <van-row class="invoice-message">
           <van-col span="12">收货人信息</van-col>
-          <van-col span="8" offset="4">
-            <van-button type="info" @click="receiptChange()">选择</van-button>
+          <van-col offset="4" span="8">
+            <van-button @click="receiptChange()" type="info">选择</van-button>
           </van-col>
         </van-row>
         <van-row class="invoice-info" v-if="receiptMessage">
-          <van-col span="24">
-            {{ receiptMessage[addressIndex].address }}
-          </van-col>
+          <van-col span="24">{{ receiptMessage[addressIndex].address }}</van-col>
           <van-col span="24">
             {{ receiptMessage[addressIndex].name }}
             {{ receiptMessage[addressIndex].phone }}
@@ -96,12 +88,8 @@
           <van-col span="24">收款账号</van-col>
         </van-row>
         <van-row class="invoice-info">
-          <van-col span="24">
-            北京修文印刷技术有限公司
-          </van-col>
-          <van-col span="24">
-            招商银行股份有限公司北京北三环支行 &nbsp; 110917960410501
-          </van-col>
+          <van-col span="24">北京修文印刷技术有限公司</van-col>
+          <van-col span="24">招商银行股份有限公司北京北三环支行 &nbsp; 110917960410501</van-col>
         </van-row>
       </div>
     </div>
@@ -109,12 +97,10 @@
     <!-- 确认订单 -->
     <div class="invoice-box">
       <div>
-        <van-row class="invoice-message-bottom" type="flex" justify="space-between">
-          <van-col span="6" >
-            合计:{{ (totalPrice + freight) | reserve2 }}
-          </van-col>
-          <van-col span="8" >
-            <van-button type="danger">确认订单</van-button>
+        <van-row class="invoice-message-bottom" justify="space-between" type="flex">
+          <van-col span="6">合计:{{ (totalPrice + freight) | reserve2 }}</van-col>
+          <van-col span="8">
+            <van-button @click="confirmOrder()" type="danger">确认订单</van-button>
           </van-col>
         </van-row>
       </div>
@@ -169,7 +155,7 @@ export default {
     this.$request.get(this.$api.billAddress, { id: id }).then(res => {
       console.log("2ee2444444444444", res);
       this.receiptMessage = res.data;
-        // 历史订单页 所需要显示数据。（邮寄地址）
+      // 历史订单页 所需要显示数据。（邮寄地址）
       // if (this.$route.params.addressId) {
       //   let addressId = this.$route.params.addressId;
       //   let that = this;
@@ -267,30 +253,61 @@ export default {
       this.getOrderInfo()
     },
     // 到发票信息页
-    invoiceChange(){
+    invoiceChange () {
       this.$router.push({
-        name:'changePage',
-        params:{title:'发票信息'}
+        name: 'changePage',
+        params: { title: '发票信息' }
       })
       sessionStorage.setItem('invoiceTitle', '发票信息')
       this.$store.state.billOrAddress = true;
       sessionStorage.setItem('billOrAddress', JSON.stringify(true))
-      console.log('iiiiiiii',this.indexs);
+      console.log('iiiiiiii', this.indexs);
       this.$store.state.redioActive = this.indexs
       sessionStorage.setItem('redioActive', JSON.stringify(this.indexs))
-      
+
     },
     // 收货信息页面
-    receiptChange(){
+    receiptChange () {
       this.$router.push({
-        name:'changePage',
-        params:{title:'收货'}
+        name: 'changePage',
+        params: { title: '收货' }
       })
       sessionStorage.setItem('invoiceTitle', '收货信息')
       this.$store.state.billOrAddress = false;
       sessionStorage.setItem('billOrAddress', JSON.stringify(false))
       this.$store.state.redioActive = this.addressIndex
       sessionStorage.setItem('redioActive', JSON.stringify(this.addressIndex))
+
+    },
+    // 确认订单
+    confirmOrder () {
+      console.log('22', this.orderInfo);
+      if (this.orderInfo.length > 0) {
+        let data = {
+          freight: this.freight,
+          describes: this.message,
+          enterpriseUser: {
+            id: this.$store.state.userId
+          },
+          enterpriseInfo: {
+            id: this.companyInvoice[this.indexs].id
+          },
+          enterpriseAddress: {
+            id: this.receiptMessage[this.addressIndex].id
+          },
+          orderDetails:this.orderInfo,
+          orderAmount:this.totalPrice + this.freight
+        }
+        this.$request.post(this.$api.confirmOrder,data).then(res => {
+          console.log('resss',res);
+          if(res.status == 200){
+            this.$toast('提交成功，请您关注物流信息')
+            this.$router.push('/mobileIndex')
+          }
+        }).catch(err => {
+          console.log('err',err);
+        })
+      }
 
     }
   },
@@ -331,13 +348,13 @@ export default {
             color: #fff;
           }
         }
-      } 
-      .delete{
+      }
+      .delete {
         display: flex;
-        justify-content:flex-end;
-        button{
+        justify-content: flex-end;
+        button {
           width: 100%;
-          border-radius:25px;
+          border-radius: 25px;
         }
       }
     }
@@ -387,22 +404,21 @@ export default {
       &:nth-child(2) {
         display: flex;
         justify-content: flex-end;
-        button{
+        button {
           width: 100%;
           border-radius: 25px;
         }
       }
     }
   }
-  .invoice-message-bottom{
+  .invoice-message-bottom {
     .van-col {
       height: 44px;
       &:nth-child(1) {
         line-height: 44px;
       }
       &:nth-child(2) {
-     
-        button{
+        button {
           width: 100%;
           border-radius: 25px;
         }

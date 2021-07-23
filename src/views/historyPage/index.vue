@@ -220,4 +220,7 @@ export default {
     right: 10px;
   }
 }
+.el-table--scrollable-x /deep/.el-table__body-wrapper{
+  overflow-x: hidden;
+}
 </style>

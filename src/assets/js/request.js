@@ -4,7 +4,9 @@ import axios from 'axios'
 import api from './api'
 
 // ? 默认请求地址:
-axios.defaults.baseURL = 'https://server.xiubi.com.cn:8000'
+// axios.defaults.baseURL = 'https://server.xiubi.com.cn:8000'
+// axios.defaults.baseURL = '192.168.0.8:8000'
+axios.defaults.baseURL = 'http://192.168.0.8:8000'
 
 // ?设置请求超时
 axios.defaults.timeout = 10000
