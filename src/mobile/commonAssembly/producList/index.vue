@@ -4,36 +4,42 @@
       <div class="title">产品列表</div>
       <div class="productListInfo">
         <!-- 每一个产品列表 -->
-        <div class="xb-list" v-for="(item, index) in list" :key="index">
+        <div :key="index" class="xb-list" v-for="(item, index) in list">
           <div class="xb-list-img">
-            <img src="../../../assets/images/logoo.png" alt="" />
+            <!-- {{ item}} -->
+            <img alt :src="item.bigFilePath" v-lazy="item.bigFilePath"/>
           </div>
           <div class="xb-list-name">
-            <div>产品名称:{{ item.productName }}</div>
-            <div>产品价格:{{ orderList[index].price }}元/{{ item.productUnits }}</div>
-            <div>产品描述:{{ item.productDesc }}</div>
+            <div class="xb-list-product-name">{{ item.productName }}</div>
+            <div v-permission="{action:tokenStatus}">单价:{{ orderList[index].price }}元/{{ item.productUnits }}</div>
+            <div v-permission="{action:tokenStatus}" class="open" @click="ifOpen(index)">
+              说明:{{ item.productDesc }}
+              <!-- <van-icon @click="open(index)" class="open-icon" name="arrow-down" />
+              <van-icon @click="close(index)" class="close-icon" name="arrow-up" /> -->
+            </div>
           </div>
-          <div class="xb-list-num">
+          <div class="xb-list-num" v-permission="{action:tokenStatus}">
             <el-input
-              v-model.number.trim="orderList[index].orderNumber"
               @blur="productNum(item.productPrices, index, item.moq)"
+              @input="change"
               oninput="if(value.length>5)value=value.slice(0,6)"
               onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
               placeholder="请输入数量"
-              @input="change"
+              v-model.number.trim="orderList[index].orderNumber"
             ></el-input>
           </div>
         </div>
       </div>
       <!-- 确认订单 -->
-      <div class="confirm">
-        <el-button type="primary" @click="confirmOrder">确认订单</el-button>
+      <div class="confirm" v-permission="{action:tokenStatus}">
+        <el-button @click="confirmOrder" type="primary">确认订单</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapState} from "vuex"
 export default {
   name: 'productList',
   data () {
@@ -41,24 +47,82 @@ export default {
       orderList: [],//订购单
       list: [
 
-      ]
+      ],
     }
   },
   created () {
     this.getProductList();
-    console.log('fffff',this.orderList);
-    
+    console.log('fffff', this.orderList);
+
   },
   computed: {
+    ...mapState(['tokenStatus'])
   },
   mounted () {
+    if(sessionStorage.getItem('listStatus')){
+      // this.orderList = JSON.parse(sessionStorage.getItem('listStatus'))
+    }
+  },
+  updated(){
+      this.fold();
+
   },
   methods: {
 
     //解决el-input无法更新视图
     change () {
+
+      // console.log('orderList',this.orderList);
+      
       this.$forceUpdate();
     },
+    // 超出折叠
+    fold () {
+      let el = document.getElementsByClassName('open');
+      let venIcon = document.getElementsByClassName('open-icon')
+      let closeIcon = document.getElementsByClassName('close-icon')
+      el.forEach((item,index) => {
+        if(item.offsetHeight > 21){
+          item.classList.add('opens')
+          // this.ifFlod = false
+          // closeIcon[index].style.display="none";
+
+        }else{
+          // venIcon[index].style.display="none";
+          // closeIcon[index].style.display="none";
+
+        }
+        
+      })
+     
+    },
+    ifOpen(index){
+      let el = document.getElementsByClassName('open');
+      if(el[index].className.indexOf('opens') == -1){
+         el[index].classList.add('opens')
+      }else{
+        el[index].classList.remove('opens')
+      }
+    },
+    // open(index){
+    //   let el = document.getElementsByClassName('open');
+    //   let venIcon = document.getElementsByClassName('open-icon')
+    //   let closeIcon = document.getElementsByClassName('close-icon')
+    //   el[index].classList.remove('opens')
+    //   venIcon[index].style.display = 'none'
+    //   closeIcon[index].style.display="block";
+
+    // },
+    // close(index){
+    //   let el = document.getElementsByClassName('open');
+    //   let venIcon = document.getElementsByClassName('open-icon')
+    //   let closeIcon = document.getElementsByClassName('close-icon')
+    //   el[index].classList.add('opens')
+    //   venIcon[index].style.display = 'block'
+    //   closeIcon[index].style.display="none";
+
+
+    // },
     //处理用户输入的订单数额
     productNum (item, index, moq) {
       // item : 价格规则
@@ -102,6 +166,9 @@ export default {
         this.orderList[index].price = item[0].price
         this.$forceUpdate();
       }
+
+      console.log('orderList',this.orderList);
+      sessionStorage.setItem('listStatus',this.orderList)
     },
     //获取产品列表
     getProductList () {
@@ -122,16 +189,16 @@ export default {
         })
       })
     },
-    confirmOrder(){
-      console.log('fffff',this.orderList);
-      const checkNumber = this.orderList.filter(item =>{
+    confirmOrder () {
+      console.log('fffff', this.orderList);
+      const checkNumber = this.orderList.filter(item => {
         return item.orderNumber;
       })
-      console.log('44444',checkNumber);
-      if(checkNumber.length >0){
-        sessionStorage.setItem('orderInfo',JSON.stringify(checkNumber))
+      console.log('44444', checkNumber);
+      if (checkNumber.length > 0) {
+        sessionStorage.setItem('orderInfo', JSON.stringify(checkNumber))
         this.$router.push('/myOrder')
-      }else{
+      } else {
         this.$toast('请选择购买产品数量')
       }
     }
@@ -152,16 +219,23 @@ export default {
     .xb-list {
       padding: 5px;
       width: 140px;
-      margin-bottom: 15px;
+      margin-bottom: 25px;
       border-radius: 3px;
       background-color: rgba(92, 99, 110, 0.2);
-      margin-right: 10px;
+      // margin-right: 10px;
       .xb-list-img {
+        width: 100%;
+        min-height: 105px;
         img {
           width: 100%;
+          min-height: 105px;
+          // height: 100%;
         }
       }
       .xb-list-name {
+        .xb-list-product-name{
+          min-height: 42px;
+        }
         > div {
           margin-bottom: 5px;
         }
@@ -169,7 +243,7 @@ export default {
       .xb-list-num {
         .el-input {
           /deep/.el-input__inner {
-            height: 28px;
+            height: 35px;
           }
         }
       }
@@ -182,4 +256,29 @@ export default {
     }
   }
 }
+.open{
+  position: relative;
+}
+.opens {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  /deep/.open-icon {
+    position: absolute;
+    right: -2px;
+    bottom: -1px;
+    color: red;
+    font-size: 18px;
+
+  }
+  
+}
+/deep/.close-icon {
+    position: absolute;
+    right: -2px;
+    top: 0px;
+    color: red;
+    font-size: 18px;
+  }
 </style>

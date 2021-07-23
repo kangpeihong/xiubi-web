@@ -1,245 +1,151 @@
 <template>
   <div class="box">
     <div
-      style="width:158px;height:150px"
-      class="prolist"
-      v-if="!drawer"
       @click="add"
+      class="prolist animated"
+      ref="prolist"
+      style="width:120px;height:75px"
+      v-if="!drawer"
     >
       <div class="left">
-        <img
-          src="https://www.xiubi.com.cn/group1/M00/00/00/rBH8OV9gbWGAF6GEAAKY2k8WYOo021.jpg"
-          alt=""
-        />
-        <!-- <div class="tile">客信 (精选)</div> -->
-        <div class="right" @click="closePage">
-          <span class="iconfont icon-liebiao1"></span>
+        <div @click="closePage" @mouseleave="mouseLeave" class="right" ref="right">
           <span class="animated bounceIn">产品列表</span>
         </div>
       </div>
     </div>
+    <div @mouseenter="arrow()" class="arrow" ref="arrow">
+      <span style="width:40px;display: block;margin-right:-15px">
+        <van-icon class="move ar-animated ar-delay-2s" name="arrow" />
+        <van-icon class="move ar-animated ar-delay-1s" name="arrow" />
+        <van-icon class="move ar-animated" name="arrow" />
+      </span>
+    </div>
 
     <el-drawer
-      title="我是标题"
-      :visible.sync="drawer"
-      direction="btt"
-      :with-header="false"
-      :size="size"
       :modal="false"
+      :size="size"
+      :visible.sync="drawer"
+      :with-header="false"
       @open="open"
+      direction="btt"
+      title="我是标题"
     >
       <div class="kong"></div>
       <!-- 商品数据列表2.0 -->
 
       <div
-        ref="fatList"
+        @click="hiddenLogin"
         @mousewheel="scrool"
         class="list animated fadeIn"
-        @click="hiddenLogin"
+        ref="fatList"
         v-if="tableShow"
       >
-        <div ref="lists" class="list-table">
-          <div
-            class="list-tr"
-            v-for="(item, index) in productList"
-            :key="index"
-          >
-            <div
-              class="imgs"
-              
-              @click="big(item.bigFilePath)"
-            >
-              <div ref="gallery" class="grid"  v-loading="loading">
-                <img :src="`${item.bigFilePath}`" alt="" />
-                <!-- <img src="../../assets/images/rBH8OV9geK2AR7ssAAe_InyBW_c594.jpg" alt=""> -->
+        <div class="list-table" ref="lists">
+          <div :key="index" class="list-tr" v-for="(item, index) in productList">
+            <div @click="big(item.bigFilePath)" class="imgs">
+              <div class="grid" ref="gallery" v-loading="loading">
+                <img :src="`${item.bigFilePath}`" alt />
               </div>
-              <img :src="`${item.bigFilePath}`" alt="" style="display:none" />
+              <img :src="`${item.bigFilePath}`" alt style="display:none" />
             </div>
-            <div class="title" :title="item.productName">
-              {{ item.productName }}
-            </div>
+            <div :title="item.productName" class="title">{{ item.productName }}</div>
             <div class="price" v-show="priceShow">
               ￥{{
-                (orderList[index].price = endPrice(item.productPrices, index))
+              (orderList[index].price = endPrice(item.productPrices, index))
               }}元/{{ item.productUnits }}
             </div>
             <div class="input" v-show="priceShow">
               <input
+                @blur="inputBtn(item.productPrices, index,item.moq)"
                 class="el-input"
-                v-model.number.trim="orderList[index].orderNumber"
                 oninput="if(value.length>5)value=value.slice(0,6)"
                 onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
                 placeholder="请输入数量"
-                @blur="inputBtn(item.productPrices, index,item.moq)"
+                v-model.number.trim="orderList[index].orderNumber"
               />
             </div>
-            <div class="describe" :title="item.productDesc" v-show="priceShow">
-              {{ item.productDesc }}
-            </div>
+            <div
+              :title="item.productDesc"
+              class="describe"
+              v-show="priceShow"
+            >{{ item.productDesc }}</div>
           </div>
         </div>
       </div>
 
-      <div
-        ref="listT"
-        @mousewheel="scrools"
-        class="list-li animated fadeIn"
-        v-if="!tableShow"
-      >
+      <div @mousewheel="scrools" class="list-li animated fadeIn" ref="listT" v-if="!tableShow">
         <div class="table-box">
-          <!-- <div class="tr">
-            <div class="logins">图标</div>
-            <div class="names">名称</div>
-            <div class="prices">价格</div>
-            <div class="describes">描述</div>
-            <div class="numbers">数量</div>
-          </div> -->
-
           <div class="scoll-box">
             <div
-              class="tr_container"
-              v-for="(item, index) in productList"
               :key="index"
               @click.stop="bigImage(index)"
+              class="tr_container"
+              v-for="(item, index) in productList"
             >
               <div class="logins">
                 <div class="smallImg">
-                  <div ref="image" v-loading="loading"  @click.stop="">
-                    <img :src="`${item.bigFilePath}`"   alt="" />
+                  <div @click.stop ref="image" v-loading="loading">
+                    <img :src="`${item.bigFilePath}`" alt />
                   </div>
-                  <!-- <div ref="image"  v-for="(items,indexs) in imgList" :key="indexs">
-                    <img :src="`${items.url}`" alt="" v-if="index === indexs" />
-                  </div> -->
                 </div>
               </div>
-              <div class="names" :title="item.productName">
-                {{ item.productName }}
-              </div>
+              <div :title="item.productName" class="names">{{ item.productName }}</div>
               <div class="prices" v-show="priceShow">
                 {{
-                  (orderList[index].price = endPrice(
-                    item.productPrices,
-                    index
-                  ))
+                (orderList[index].price = endPrice(
+                item.productPrices,
+                index
+                ))
                 }}/{{ item.productUnits }}
               </div>
               <div
-                class="describes"
                 :title="item.productDesc"
+                class="describes"
                 v-show="priceShow"
-              >
-                {{ item.productDesc }}
-              </div>
-              <div class="numbers" @click.stop="" v-show="priceShow">
+              >{{ item.productDesc }}</div>
+              <div @click.stop class="numbers" v-show="priceShow">
                 <input
+                  @blur="inputBtn(item.productPrices, index,item.moq)"
                   class="el-input"
-                  v-model.number.trim="orderList[index].orderNumber"
                   oninput="if(value.length>5)value=value.slice(0,6)"
                   onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
                   placeholder="请输入数量"
-                  @blur="inputBtn(item.productPrices, index,item.moq)"
+                  v-model.number.trim="orderList[index].orderNumber"
                 />
               </div>
             </div>
           </div>
-
-          <!-- <el-table
-            :data="productList"
-            height="95vh"
-            stripe
-            style="width: 80%"
-            class="ximiBlock"
-          >
-            <el-table-column prop="productName" label="图标" width="50">
-              <template slot-scope="scope">
-                <div class="smallImg">
-                  <viewer @inited="inited">
-                    <img :src="`${scope.row.bigFilePath}`" alt="" />
-                  </viewer>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="productName" label="名称" width="280">
-            </el-table-column>
-            <el-table-column
-              prop="productPrices[0].price"
-              label="价格"
-              width="180"
-            >
-              <template slot-scope="scope">
-                <span
-                  >{{ scope.row.productPrices[0].price }}/{{
-                    scope.row.productUnits
-                  }}</span
-                >
-              </template>
-            </el-table-column>
-            <el-table-column prop="productDesc" label="描述" width="280">
-            </el-table-column>
-            <el-table-column prop="" label="数量" width="180">
-              <template slot-scope="scope">
-                <input
-                  class="el-input"
-                  v-model.number.trim="orderList[scope.$index].orderNumber"
-                  @click="inin(scope)"
-                  oninput="if(value.length>5)value=value.slice(0,5)"
-                  onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-                  placeholder="请输入数量"
-                />
-              </template>
-            </el-table-column>
-          </el-table> -->
         </div>
       </div>
 
       <div class="trBtn">
         <div class="tright list-top">
-          <i
-            class="el-icon-s-unfold libiao"
-            @click="changeList"
-            v-if="ifTable"
-          ></i>
-          <i class="el-icon-menu biaoge" @click="changeTable" v-else></i>
+          <i @click="changeList" class="el-icon-s-unfold libiao" v-if="ifTable"></i>
+          <i @click="changeTable" class="el-icon-menu biaoge" v-else></i>
         </div>
-        <div class="tright" @click.stop="closeDrawer">
+        <div @click.stop="closeDrawer" class="tright">
           <span class="iconfont icon-shouqi2"></span>
         </div>
         <div>
-          <input
-            type="button"
-            value="确认订单"
-            @click.stop="onSubmit"
-            class="subBtn"
-          />
+          <input @click.stop="onSubmit" class="subBtn" type="button" value="确认订单" />
         </div>
       </div>
       <div class="mengceng" v-if="bigImg.show">
         <div
           :class="bigImg"
-          ref="bigImg"
-          class="bigImgs animated animate__fadeIn"
           @click.stop="size = '100%'"
+          class="bigImgs animated animate__fadeIn"
+          ref="bigImg"
         >
-          <div ref="image" class="rotate-box animated zoomIn">
-            <div ref="rotate" class="rotate animated fadeIn" @click="rotate">
-              <i class=" el-icon-refresh-right"></i>
+          <div class="rotate-box animated zoomIn" ref="image">
+            <div @click="rotate" class="rotate animated fadeIn" ref="rotate">
+              <i class="el-icon-refresh-right"></i>
             </div>
-            <img :src="img" alt="" class="followm " />
-            <i
-              ref="is"
-              class="el-icon-error animated zoomIn"
-              @click.stop="closeBigImg"
-            ></i>
+            <img :src="img" alt class="followm" />
+            <i @click.stop="closeBigImg" class="el-icon-error animated zoomIn" ref="is"></i>
           </div>
         </div>
       </div>
-      <!-- <el-dialog  :visible.sync="bigImg.show" >
-        <div :class="bigImg" ref="bigImg" class="bigImgs animated animate__fadeIn">
-          <img :src="img" alt="" class="followm animated zoomIn">
-          <i class="el-icon-error animated zoomIn" @click.stop="closeBigImg"></i>
-
-        </div>
-      </el-dialog> -->
     </el-drawer>
   </div>
 </template>
@@ -252,7 +158,7 @@ import bus from "../../utils/bus";
 
 // console.log("88888", listInfo);
 export default {
-  data() {
+  data () {
     return {
       drawer: false,
       productList: [],
@@ -280,30 +186,30 @@ export default {
       muilt: 1,
       muilts: 1,
       options: {
-          inline: true,
-          button: true,
-          navbar: true,
-          title: true,
-          toolbar: true,
-          tooltip: true,
-          movable: true,
-          zoomable: true,
-          rotatable: true,
-          scalable: true,
-          transition: true,
-          fullscreen: true,
-          keyboard: true,
-          url: "data-source"
-        }
+        inline: true,
+        button: true,
+        navbar: true,
+        title: true,
+        toolbar: true,
+        tooltip: true,
+        movable: true,
+        zoomable: true,
+        rotatable: true,
+        scalable: true,
+        transition: true,
+        fullscreen: true,
+        keyboard: true,
+        url: "data-source"
+      }
     };
   },
   computed: {},
-  created() {
+  created () {
     this.getList();
 
     // this.setImg();
   },
-  mounted() {
+  mounted () {
     var token_imit = window.sessionStorage.getItem("user-token");
     if (token_imit) {
       this.priceShow = true;
@@ -311,19 +217,56 @@ export default {
       // debugger
       this.priceShow = false;
     }
+
+    this.openListBtn()
     // window.addEventListener("mousewheel", this.handleScroll, false);
   },
-  updated() {},
+  updated () { },
   methods: {
-    open() {
+    openListBtn () {
+      console.log('right', this.$refs.prolist);
+
+      setTimeout(() => {
+        this.$refs.prolist.classList.add('prolistBlock');
+        this.$refs.prolist.classList.add('heartBeat');
+      }, 2000)
+
+      setTimeout(() => {
+        this.$refs.prolist.classList.remove('heartBeat');
+        this.$refs.prolist.classList.add('bounceOutRight');
+        // this.$refs.prolist.classList.remove('rightBlock');
+      }, 3000)
+
+      setTimeout(() => {
+        this.$refs.prolist.classList.remove('prolistBlock');
+        this.$refs.arrow.classList.add('arrowBlock');
+      }, 4000)
+
+
+    },
+    arrow () {
+      this.$refs.arrow.classList.remove('arrowBlock');
+      this.$refs.prolist.classList.remove('bounceOutRight');
+      this.$refs.prolist.classList.add('bounceInRight');
+
+      this.$refs.prolist.classList.add('prolistBlock');
+    },
+    mouseLeave () {
+      console.log('画出来了');
+      this.$refs.arrow.classList.add('arrowBlock');
+      this.$refs.prolist.classList.add('bounceOutRight');
+
+    },
+
+    open () {
       // debugger
       this.tableView();
     },
 
-    bigImage(index) {
+    bigImage (index) {
       this.views[index].view();
     },
-    setImg() {
+    setImg () {
       Viewer.setDefaults({
         Options: {
           inline: false,
@@ -368,7 +311,7 @@ export default {
       });
     },
 
-    inputBtn(item, index,moq) {
+    inputBtn (item, index, moq) {
       // debugger
       var inputNum = item[0].productNumber; //请订值
       var moq = moq; //购买数量的基准值
@@ -376,7 +319,7 @@ export default {
       console.log("pppp", num);
 
       // 起订不能低于指定值
-      if (moq !=0 && num !=='' && num !==null) {
+      if (moq != 0 && num !== '' && num !== null) {
         this.$message({
           message: `起订数量为${moq}`,
           type: "warning"
@@ -444,10 +387,10 @@ export default {
     },
 
     // 列表图片放大
-    hiddenLogin() {
+    hiddenLogin () {
       this.$store.state.loginShow = false;
     },
-    big(imgurl, e) {
+    big (imgurl, e) {
       // console.log('tttt',e)
       // this.bigShows = true;
       // this.img = imgurl;
@@ -458,7 +401,7 @@ export default {
       // this.bigImg.hide = false;
     },
     // 切换列表和表格
-    changeList() {
+    changeList () {
       this.ifTable = false;
       this.tableShow = false;
       // this.numCheck = 1
@@ -472,40 +415,40 @@ export default {
     },
 
     // 初始化列表放大实例
-    listView() {
+    listView () {
       this.$nextTick(() => {
         for (var i = 0; i < this.$refs.image.length; i++) {
-          this.views.push(new Viewer(this.$refs.image[i],{title:false}));
+          this.views.push(new Viewer(this.$refs.image[i], { title: false }));
         }
       });
     },
     // 初始化表格放大实例
-    tableView() {
+    tableView () {
       this.$nextTick(() => {
         for (var i = 0; i < this.$refs.gallery.length; i++) {
-          this.viewer = new Viewer(this.$refs.gallery[i],{title:false});
+          this.viewer = new Viewer(this.$refs.gallery[i], { title: false });
 
 
         }
       });
     },
-    changeTable() {
+    changeTable () {
       this.ifTable = true;
       this.tableShow = true;
       console.log("2");
       this.muilt = 1;
-        this.$nextTick(() => {
+      this.$nextTick(() => {
         this.$refs.fatList.style.paddingTop = "60px";
       });
       this.tableView();
     },
     // 列表图片缩小
-    closeBigImg() {
+    closeBigImg () {
       this.bigImg.show = false;
       this.bigImg.hide = true;
     },
     // 旋转图片
-    rotate() {
+    rotate () {
       switch (this.deg) {
         case 0:
           this.deg = 90;
@@ -536,18 +479,18 @@ export default {
       this.$refs.image.style.transform = `rotate(${this.deg}deg)`;
       // this.$refs.is.style = "left:0";
     },
-    handleScroll() {
+    handleScroll () {
       this.bigImg.show = false;
       this.bigImg.hide = true;
     },
     // 列表出现时，登录/注册页面消失。
-    closePage() {
+    closePage () {
       // this.size = "50%";
       this.$store.state.loginShow = false;
       this.$store.state.registerShow = false;
     },
     // 获取数据列表
-    getList() {
+    getList () {
       this.$axios({
         method: "GET",
         url: "/api/xwProduct/back",
@@ -593,7 +536,7 @@ export default {
         });
     },
 
-    onSubmit() {
+    onSubmit () {
       console.log("...", this.orderList);
       this.$store.state.checkOrder = true;
       this.$store.state.againOrder = false;
@@ -617,7 +560,7 @@ export default {
         this.drawer = false;
       }
     },
-    scrool(e) {
+    scrool (e) {
       var cHeight = document.documentElement.clientHeight;
       var muilt = this.muilt++;
       var paddingNum = muilt * 60;
@@ -627,7 +570,7 @@ export default {
         this.$refs.fatList.style.paddingTop = `${paddingNum}px`;
       }
     },
-    scrools() {
+    scrools () {
       var cHeight = document.documentElement.clientHeight;
       var muilts = this.muilts++;
       var paddingNums = muilts * 60;
@@ -637,8 +580,10 @@ export default {
         this.$refs.listT.style.paddingTop = `${paddingNums}px`;
       }
     },
-    add() {
+    add () {
       this.drawer = true;
+      this.$refs.arrow.classList.add('arrowBlock');
+      this.$refs.prolist.classList.add('bounceOutRight');
       this.size = "100%";
       this.muilt = 1;
       this.$nextTick(() => {
@@ -651,14 +596,14 @@ export default {
         }
       });
     },
-    endPrice(productPrices, index) {
+    endPrice (productPrices, index) {
       if (productPrices.length > 1) {
         for (var i = 0; i < productPrices.length; i++) {
           if (
             this.orderList[index].orderNumber >=
-              productPrices[i].productNumber &&
+            productPrices[i].productNumber &&
             this.orderList[index].orderNumber <
-              productPrices[i + 1].productNumber
+            productPrices[i + 1].productNumber
           ) {
             return productPrices[i].price;
           } else if (
@@ -671,7 +616,7 @@ export default {
       }
       return productPrices[0].price;
     },
-    showImg(imgurl, e) {
+    showImg (imgurl, e) {
       this.img = `${imgurl}_resize_?w=1000&h=1000`;
       this.bigImg.show = true;
       this.bigImg.hide = false;
@@ -683,12 +628,16 @@ export default {
       this.$refs.bigImg.style.left = intX - 150 < 0 ? 0 : intX - 150 + "px";
       this.$refs.bigImg.style.top = intY - 150 < 0 ? 0 : intY - 150 + "px";
     },
-    hideImg(e) {
+    hideImg (e) {
       this.bigImg.show = false;
       this.bigImg.hide = true;
     },
 
-    closeDrawer() {
+    closeDrawer () {
+    
+
+
+
       this.$store.state.loginShow = false;
       this.$store.state.registerShow = false;
       this.drawer = false;
@@ -781,7 +730,7 @@ html {
 .viewer-toolbar > ul > .viewer-large {
   display: none !important;
 }
-.grid{
+.grid {
   width: 113.99px;
   height: 89.93px;
 }
@@ -1016,22 +965,19 @@ html {
   //  background:rgba(224, 230, 235,0.8);
   // background: linear-gradient(to bottom, #ccc, #e2e2e2, #f7f7f7);
   background: transparent;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 /deep/ .el-card__body {
   padding: 10px;
 }
 .left {
-  width: 158px;
+  width: 100%;
   display: inline-block;
-  overflow: hidden;
+  text-align: right;
+  // overflow: hidden;
   // border-radius: 50%;
-  img {
-    display: block;
-    width: 100%;
-    transition: 0.65s;
-  }
+  width: 1005;
   .tile {
     height: 40px;
     background-color: #fff;
@@ -1048,33 +994,20 @@ html {
   // }
 }
 .right {
-  transition: 0.65s;
-  // border-radius: 50%;
-  // position: absolute;
   display: inline-block;
-  // height: 100%;
-  // top: 0;
   line-height: 35px;
+  margin-top: 20px;
   height: 35px;
-  width: 100%;
-  // display: none;
-  // border-left: 1px solid #a9b0b9;
+  width: 80px;
   vertical-align: bottom;
   text-align: center;
-  // padding-top: 20px;
   box-sizing: border-box;
   background-color: #fff;
-  // line-height: 2;
-  p {
-    color: #fff;
-    font-size: 25px;
-    width: 100%;
-    text-align: centera;
-  }
-  .iconfont {
-    position: absolute;
-    left: 10px;
-  }
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+}
+.rightBlock {
+  display: inline-block !important;
 }
 
 .imgbox {
@@ -1137,9 +1070,13 @@ html {
   margin-bottom: 20px;
 }
 .prolist {
+  display: none;
   position: fixed;
   right: 0;
-  bottom: 4px;
+  bottom: 150px;
+}
+.prolistBlock {
+  display: block !important;
 }
 
 .foot {
@@ -1216,7 +1153,84 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none !important;
 }
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
+}
+@keyframes move {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  50% {
+    left: 50%;
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+.move {
+  -webkit-animation-name: move;
+  animation-name: move;
+  position: relative;
+  margin-left: -25px;
+  font-size: 15px;
+  color: #fff;
+}
+.ar-animated {
+  -webkit-animation-duration: 1.5s;
+  animation-duration: 1.5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  font-style: inherit;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+}
+.ar-delay-1s {
+  animation-delay: 0.1s;
+}
+.ar-delay-2s {
+  animation-delay: 0.2s;
+}
+.ar-delay-3s {
+  animation-delay: 0.3s;
+}
+.ar-delay-4s {
+  animation-delay: 0.4s;
+}
+.ar-delay-5s {
+  animation-delay: 0.5s;
+}
+.ar-delay-6s {
+  animation-delay: 0.6s;
+}
+.ar-delay-7s {
+  animation-delay: 0.7s;
+}
+.ar-delay-8s {
+  animation-delay: 0.8s;
+}
+.ar-delay-9s {
+  animation-delay: 0.9s;
+}
+.ar-delay-10s {
+  animation-delay: 0.1s;
+}
+.arrow {
+  position: fixed;
+  width: 80px;
+  display: none;
+  right: 25px;
+  bottom: 180px;
+  text-align:right;
+}
+.btt{
+  overflow-x: hidden;
+}
+.arrowBlock {
+  display: block !important;
 }
 </style>

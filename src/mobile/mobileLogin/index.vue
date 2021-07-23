@@ -1,8 +1,8 @@
 <template>
   <div class="mobile-login">
-    <div class="logo">
+    <!-- <div class="logo">
       <img src="../../assets/images/logoo.png" />
-    </div>
+    </div> -->
     <div class="login-container">
       <!-- 账号和密码登陆 -->
       <div class="login-number" v-if="checkNumber">
@@ -96,9 +96,9 @@
       <!-- 其他方式登陆 -->
       <div class="xb-icon-bottom">
         <div class="xb-other">
-          <div></div>
+          <!-- <div></div>
           <div>其他方式登陆</div>
-          <div></div>
+          <div></div> -->
         </div>
         <div class="xb-icon-phone">
           <div class="icon">
@@ -146,7 +146,8 @@ export default {
     },
     register () {
       // this.$router.push('/register')
-      this.$router.push('/register')
+      this.$parent.openRegisterPage();
+      // this.$router.push('/register')
     },
     // 发送验证码
     sendCode () {
@@ -177,6 +178,11 @@ export default {
     },
     // 账号密码登陆
     numberLogin () {
+      console.log('9090990090', this.userInfo.code);
+      
+      if(this.userInfo.code !==''){
+        this.userInfo.code = ''
+      }
       this.$refs.form.validate(valid => {
         if (valid) {
           this.commonLogin()
@@ -199,8 +205,13 @@ export default {
         window.sessionStorage.setItem("user-token", JSON.stringify(res.data));
         this.$store.state.userId = res.data.enterpriseUserDTO.id;
         sessionStorage.setItem("user-id", JSON.stringify(res.data.enterpriseUserDTO.id))
+        this.$store.state.tokenStatus = true;
+        sessionStorage.setItem("tokenStatus", true)
+         this.$parent.closeLoginPage()
+        location.reload()
         this.$toast.success('登陆成功');
-        this.$router.push('/mobileIndex')
+       
+        // this.$router.push('/mobileIndex')
       }).catch(err => {
         console.log(err, "失败的login");
         this.$toast('账号或密码错误');
@@ -221,7 +232,7 @@ export default {
 <style scoped lang="less">
 .mobile-login {
   // height: 100vh;
-  padding: 70px 55px 30px 55px;
+  // padding: 70px 55px 30px 55px;
   .logo {
     // width: 225px;
     // margin: 70px auto;

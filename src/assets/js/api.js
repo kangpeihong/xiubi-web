@@ -43,6 +43,11 @@ const api = {
   alterPublicMessage: '/api/notice' /* TODO: 修改公告 */,
   delPublicMessage: '/api/notice' /* TODO: 删除公告 */,
   allPublicMessage: '/api/notice/all' /* TODO: 查看所有的公告信息 */,
+
+  /* TODO: 提交订单 */
+  confirmOrder: '/api/xwOrder/create',
+  /* TODO: 车间videoUrl */
+  videoUrl: '/api/room',
 }
 
 export default api
