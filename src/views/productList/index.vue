@@ -2,24 +2,42 @@
   <div class="box">
     <div
       @click="add"
+      @mouseenter="enter" @mouseleave="leave" 
       class="prolist animated"
       ref="prolist"
       style="width:120px;height:75px"
-      v-if="!drawer"
+      v-show="!drawer"
     >
-      <div class="left">
+      <!-- 产品列表第一版 -->
+      <!-- <div class="left">
         <div @click="closePage" @mouseleave="mouseLeave" class="right" ref="right">
           <span class="animated bounceIn">产品列表</span>
         </div>
+      </div>-->
+
+      <!-- 产品列表第二版 -->
+      <div class="product-list">
+        <div class="product-icon">
+          <van-icon name="bars" />
+          <span>产品列表</span>
+        </div>
+        <div class="product-img" v-show="imgShow" > 
+          <img v-if="productList.length>0"  :src="productList[0].bigFilePath" alt="">
+        </div>
+
       </div>
+
     </div>
-    <div @mouseenter="arrow()" class="arrow" ref="arrow">
-      <span style="width:40px;display: block;margin-right:-15px">
+    <!-- 产品列表第一版 -->
+    <!-- <div @mouseenter="arrow()" class="arrow" ref="arrow">
+      <span style="width:50px;display: block;">
         <van-icon class="move ar-animated ar-delay-2s" name="arrow" />
         <van-icon class="move ar-animated ar-delay-1s" name="arrow" />
         <van-icon class="move ar-animated" name="arrow" />
       </span>
-    </div>
+    </div>-->
+
+    <!-- 产品列表第二版 -->
 
     <el-drawer
       :modal="false"
@@ -160,6 +178,7 @@ import bus from "../../utils/bus";
 export default {
   data () {
     return {
+      imgShow:true,
       drawer: false,
       productList: [],
       orderList: [],
@@ -208,6 +227,8 @@ export default {
     this.getList();
 
     // this.setImg();
+
+    this.imgShow = true;
   },
   mounted () {
     var token_imit = window.sessionStorage.getItem("user-token");
@@ -218,11 +239,38 @@ export default {
       this.priceShow = false;
     }
 
-    this.openListBtn()
+    // this.openListBtn()
+
+    this.productListHidden();
     // window.addEventListener("mousewheel", this.handleScroll, false);
   },
   updated () { },
   methods: {
+
+
+    // 产品列表第二版
+    productListHidden(){
+      setTimeout(() => {
+        this.$refs.prolist.classList.add('leave')
+        this.imgShow = false;
+      },7000)
+
+    },
+    enter(){
+      this.$refs.prolist.classList.remove('leave')
+    },
+    leave(){
+      this.imgShow = false;
+      this.$refs.prolist.classList.add('leave')
+    },
+
+
+
+
+
+
+
+
     openListBtn () {
       console.log('right', this.$refs.prolist);
 
@@ -582,8 +630,12 @@ export default {
     },
     add () {
       this.drawer = true;
-      this.$refs.arrow.classList.add('arrowBlock');
-      this.$refs.prolist.classList.add('bounceOutRight');
+      this.imgShow = false;
+      this.$refs.prolist.classList.add('leave')
+      // this.leave()
+      // this.$refs.prolist.classList.add('leave')
+      // this.$refs.arrow.classList.add('arrowBlock');
+      // this.$refs.prolist.classList.add('bounceOutRight');
       this.size = "100%";
       this.muilt = 1;
       this.$nextTick(() => {
@@ -634,10 +686,6 @@ export default {
     },
 
     closeDrawer () {
-    
-
-
-
       this.$store.state.loginShow = false;
       this.$store.state.registerShow = false;
       this.drawer = false;
@@ -998,7 +1046,7 @@ html {
   line-height: 35px;
   margin-top: 20px;
   height: 35px;
-  width: 80px;
+  width: 100px;
   vertical-align: bottom;
   text-align: center;
   box-sizing: border-box;
@@ -1070,7 +1118,7 @@ html {
   margin-bottom: 20px;
 }
 .prolist {
-  display: none;
+  // display: none; //产品列表第一版
   position: fixed;
   right: 0;
   bottom: 150px;
@@ -1173,12 +1221,14 @@ input[type='number'] {
 .move {
   -webkit-animation-name: move;
   animation-name: move;
-  position: relative;
-  margin-left: -25px;
+  // position: relative;
+  // margin-left: -25px;
   font-size: 15px;
   color: #fff;
 }
 .ar-animated {
+  margin-left: -10px;
+  color: #fff;
   -webkit-animation-duration: 1.5s;
   animation-duration: 1.5s;
   -webkit-animation-fill-mode: both;
@@ -1221,16 +1271,62 @@ input[type='number'] {
 }
 .arrow {
   position: fixed;
-  width: 80px;
+  width: 50px;
   display: none;
-  right: 25px;
+  right: 35px;
   bottom: 180px;
-  text-align:right;
+  // text-align:right;
 }
-.btt{
+.btt {
   overflow-x: hidden;
 }
 .arrowBlock {
   display: block !important;
+}
+
+
+
+// 产品列表第二版
+.prolist{
+  width: 120px !important;
+  height: auto !important;
+  bottom: 120px !important;
+
+  transition:.8s;
+}
+.leave{
+  right: -85px;
+  // bottom: 88.5px !important;
+}
+.enter{
+  
+}
+.product-list{
+  color: #ffffff;
+  background:#fff;
+  // padding:5px;
+  box-sizing: border-box;
+  // border-top-left-radius: 3px;
+  // border-bottom-left-radius: 3px;
+  position: relative;
+  >.product-icon{
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+    font-size: 16px;
+    color: #000;
+    >i{
+      font-size: 25px;
+    }
+  }
+  .product-img{
+    width: 100%;
+    position: absolute;
+    top: 35px;
+    img{
+      width: 100%;
+    }
+  }
 }
 </style>

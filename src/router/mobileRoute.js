@@ -6,6 +6,7 @@ const mobileIndex = () => import('../mobile/mobileIndex')
 const historyPage = () => import('../mobile/commonAssembly/historyPage')
 const myOrder = () => import('../mobile/commonAssembly/myOrder')
 const changePage = () => import('../mobile/commonAssembly/changePage')
+const errPage = () => import('../mobile/err.vue')
 
 const mobileRoutes = [
   {
@@ -44,6 +45,11 @@ const mobileRoutes = [
     path: '/changePage',
     name: 'changePage',
     component: changePage,
+  },
+  {
+    path: '/err',
+    name: 'err',
+    component: errPage,
   },
 ]
 

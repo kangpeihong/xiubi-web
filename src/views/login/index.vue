@@ -1,25 +1,27 @@
 <template>
   <div class="loginCard animated fadeIn" v-if="loginShow">
     <div class="head">
-      <img src="../../assets/images/logoo.jpg" alt="" />
-      <a href="#"><i class="el-icon-close clbtn" @click="goback"></i></a>
+      <img alt src="../../assets/images/logoo.jpg" />
+      <a href="#">
+        <i @click="goback" class="el-icon-close clbtn"></i>
+      </a>
     </div>
     <el-tabs :stretch="true">
       <el-tab-pane label="账号密码登陆">
         <el-input
-          placeholder="手机号"
-          v-model="logindata.variable"
-          class="inpt"
           :clearable="true"
+          class="inpt"
           oninput="if(value.length>5)value=value.slice(0,11)"
           onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+          placeholder="手机号"
+          v-model="logindata.variable"
         ></el-input>
         <el-input
-          placeholder="密码"
-          v-model="logindata.password"
-          class="inpt"
           :clearable="true"
+          class="inpt"
+          placeholder="密码"
           type="password"
+          v-model="logindata.password"
         ></el-input>
         <!-- <el-input
           placeholder="密码"
@@ -30,37 +32,30 @@
           @input="formatCardNumber(logindata.a)"
           ref="cardInput"
           onkeyup="value=value.replace(/(\d{4})(?=\d)/g,'')"
-        ></el-input> -->
-        <el-button type="primary" class="loginbt" @click="get_login">
-          登陆</el-button
-        >
+        ></el-input>-->
+        <el-button @click="get_login" class="loginbt" type="primary">登陆</el-button>
       </el-tab-pane>
       <el-tab-pane label="手机号验证码登陆">
         <el-input
-          placeholder="手机号"
-          v-model="logindata.variable"
-          class="inpt"
           :clearable="true"
+          class="inpt"
           oninput="if(value.length>5)value=value.slice(0,11)"
           onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+          placeholder="手机号"
+          v-model="logindata.variable"
         ></el-input>
-        <el-input
-          placeholder="验证码"
-          class="vcode inpt"
-          v-model="logindata.code"
-          :clearable="true"
-        ></el-input>
-        <el-button @click="sendCode" :disabled="isDisabled">{{
+        <el-input :clearable="true" class="vcode inpt" placeholder="验证码" v-model="logindata.code"></el-input>
+        <el-button :disabled="isDisabled" @click="sendCode">
+          {{
           buttonName
-        }}</el-button>
-        <el-button type="primary" class="loginbt" @click="get_login">
-          登陆</el-button
-        >
+          }}
+        </el-button>
+        <el-button @click="get_login" class="loginbt" type="primary">登陆</el-button>
       </el-tab-pane>
       <div class="foot">
-        <a href="#" @click="forgetPsd"> 忘记密码?</a>
-        <a href="#" @click="findNumber" class="re">账号找回</a>
-        <a href="#" @click="register" class="re"> 新用户注册</a>
+        <!-- <a @click="forgetPsd" href="#">忘记密码?</a> -->
+        <a @click="findNumber" class="re" href="#">账号找回</a>
+        <a @click="register" class="re" href="#">新用户注册</a>
       </div>
     </el-tabs>
 
@@ -83,20 +78,20 @@
                 <el-button @click="dialogvisb = false">取 消</el-button>
                 <el-button type="primary" @click="get_login">确 定</el-button>
             </span>
-        </el-dialog> -->
+    </el-dialog>-->
   </div>
 </template>
 
 <script>
 export default {
   name: "login",
-  data() {
+  data () {
     return {
       logindata: {
         variable: "", // 用户名
         password: "", // 密码
         code: "",
-        uuid:""
+        uuid: ""
       },
       dialogvisb: false,
       url: "",
@@ -104,14 +99,14 @@ export default {
       buttonName: "发送验证码",
       isDisabled: false,
       time: 60,
-      addform:{
-        remark:''
+      addform: {
+        remark: ''
       }
     };
   },
-  created() {},
+  created () { },
   computed: {
-    loginShow() {
+    loginShow () {
       return this.$store.state.loginShow;
     }
   },
@@ -150,52 +145,66 @@ export default {
     //   })
     // },
     // login登陆
-    get_login() {
+    get_login () {
       this.$emit("login", false);
-      this.$axios({
-        method: "POST",
-        url: "/api/enterprise/user/loginPlatform",
-        data: this.logindata
-      })
-        .then(res => {
-          console.log("///sssss", res);
-          this.dialogvisb = false;
-          console.log(res, "login请求成功");
-          // debugger
-          // 注释掉就无法登陆
-          this.$store.state.ids = res.data.enterpriseUserDTO.id;
-          window.sessionStorage.setItem("user-token", JSON.stringify(res.data));
-          this.$router.push("/");
-          window.location.reload();
+
+      if (this.logindata.variable!==''&& this.logindata.password!=='') {
+
+        let reg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+        let regStatus= reg.test(this.logindata.variable)
+        if(!regStatus){
+          this.$message('请输入正确手机号')
+          return
+        }
+        this.$axios({
+          method: "POST",
+          url: "/api/enterprise/user/loginPlatform",
+          data: this.logindata
         })
-        .catch(err => {
-          console.log(err, "失败的login");
-          this.$message("账号或密码有误");
-        });
+          .then(res => {
+            console.log("///sssss", res);
+            this.dialogvisb = false;
+            console.log(res, "login请求成功");
+            // debugger
+            // 注释掉就无法登陆
+            this.$store.state.ids = res.data.enterpriseUserDTO.id;
+            window.sessionStorage.setItem("user-token", JSON.stringify(res.data));
+            this.$router.push("/");
+            window.location.reload();
+          })
+          .catch(err => {
+            console.log(err, "失败的login");
+            this.$message("账号或密码有误");
+          });
+      } else {
+
+        this.$message('请输入账号或密码')
+      }
+
     },
 
     // 注冊跳转
-    register() {
+    register () {
       this.$store.state.registerShow = true;
       this.$router.push("/register");
     },
     // 跳转账号找回Page
-    findNumber(){
+    findNumber () {
       this.$router.push('/findnumber')
     },
-    goback() {
+    goback () {
       this.$router.replace("/");
     },
-    forgetPsd() {
+    forgetPsd () {
       this.$message("验证码登陆后可重新修改密码");
     },
-    checkPhone() {
+    checkPhone () {
       if (!/^1[34578]\d{9}$/.test(this.logindata.variable)) {
         this.trf = true;
       }
     },
     // 发送验证码
-    sendCode() {
+    sendCode () {
       if (!this.logindata.variable) {
         this.$message({
           message: "请输入手机号",
@@ -217,7 +226,7 @@ export default {
           });
           var me = this;
           this.isDisabled = true;
-          var interval = window.setInterval(function() {
+          var interval = window.setInterval(function () {
             me.buttonName = "已发送" + me.time;
             --me.time;
             if (me.time < 0) {

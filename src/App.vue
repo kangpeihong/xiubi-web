@@ -52,8 +52,9 @@
         </div>
       </div>
 
-      <publicMessage />
-
+      <div class="public-left">
+        <publicMessage />
+      </div>
       <router-view />
 
       <prolist v-on:open-list="this.$router.push('/')"></prolist>
@@ -64,7 +65,8 @@
       </div>
 
       <!-- 车间直播视屏选择 -->
-      <div @mouseleave="mouseLeave" class="changePlayer animated" ref="changePlayer">
+      <!-- 车间列表第一版 -->
+      <!-- <div @mouseleave="mouseLeave" class="changePlayer animated" ref="changePlayer">
         <div
           :id="'video'+item.id"
           :key="index"
@@ -72,11 +74,40 @@
           class="workSpace"
           v-for="(item,index) in videoData"
         >{{item.roomName}}</div>
-      </div>
+      </div>-->
 
       <!-- 提示箭头 -->
 
-      <div @mouseenter="arrow()" class="arrow" ref="arrow">
+      <!-- <div @mouseenter="arrow()" class="arrow" ref="arrow">
+        <span style="width:40px;display: block;margin-right:-15px">
+          <van-icon class="move ar-animated ar-delay-2s" name="arrow" />
+          <van-icon class="move ar-animated ar-delay-1s" name="arrow" />
+          <van-icon class="move ar-animated" name="arrow" />
+        </span>
+      </div>-->
+
+      <!-- 车间列表第二版 -->
+      <div @mouseleave="workShopLeave" class="workShop animated" ref="workShop">
+        <div
+          :id="'video'+item.id"
+          :key="index"
+          @click="changeVideo(item,index)"
+          @mouseenter="workShopEnter()"
+          class="workSpace"
+          v-for="(item,index) in videoData"
+        >
+          <div @mouseenter="imgEnter(index)" @mouseleave="imgLeave(index)" class="video-img">
+            <div :class="'title'+index" class="title-box animated" ref="titleBox">
+              <div class="title">{{item.roomName}}</div>
+            </div>
+            <div class="imgArea">
+              <img alt src="./assets/images/修文印刷订单.jpg" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div @mouseenter="arrows()" class="arrows" ref="arrows">
         <span style="width:40px;display: block;margin-right:-15px">
           <van-icon class="move ar-animated ar-delay-2s" name="arrow" />
           <van-icon class="move ar-animated ar-delay-1s" name="arrow" />
@@ -124,6 +155,7 @@ export default {
       videoData: [],
       videoOne: null,
       loading: true,
+      videoLeftStatus: false,
     }
   },
   components: {
@@ -147,10 +179,7 @@ export default {
   },
   mounted () {
     this.getparter()
-    this.openListBtn()
-    // this.$nextTick(() => {
-    //   this.getplay()
-    // })
+    // this.openListBtn()
     let token = sessionStorage.getItem('user-token')
 
     if (token !== '' && token !== null) {
@@ -164,43 +193,102 @@ export default {
     if (!this.flag) {
       this.getplay()
 
-      // this.getVideo('A00168', 'video')
-      /* var pathName = "A00168";
-      var video = document.getElementById('video');
-      if (Hls.isSupported()) {
-        var hls = new Hls({
-          debug: true,
-        });
-        hls.loadSource('https://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8');
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-          // video.muted = true;
-          video.play();
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = 'http://monitor.xiubi.com.cn/live/' + pathName + '/livestream.m3u8';
-        video.addEventListener('canplay', function () {
-          video.play();
-        });
-      } */
+      this.workShop()
+      this.videoLeft()
     }
 
+
+    // window.addEventListener('mousemove', this.mousemove, false);
 
 
   },
   updated () {
-    // this.videoData.forEach((item, index) => {
-    //   this.getVideo(item.roomNo, `video${item.id}`)
-    // })
 
   },
   beforeDestroy () {
 
   },
   methods: {
-    openListBtn () {
-      console.log('right', this.$refs.prolist);
 
+    // 解决公告信息不在视屏内问题
+
+    videoLeft () {  
+      var dom = document.getElementById('video')
+      var publicDom = document.querySelector('.common')
+      var loginDom = document.querySelector('.login')
+          console.log('videoLeftStatus', loginDom);
+
+      console.log('video', dom.offsetLeft);
+      var _index = 0;
+      dom.addEventListener('timeupdate', function () {
+        _index++;
+        if (_index == 1) {
+          this.videoLeftStatus = true;
+          console.log('videoLeftStatus', this.videoLeftStatus);
+          console.log('videoLeftStatus', dom.offsetWidth, dom.offsetLeft);
+          publicDom.style.left = dom.offsetLeft + 10 + 'px'
+          publicDom.style.display = 'block'
+          loginDom.style.marginRight = dom.offsetLeft + 'px'
+          loginDom.style.display = 'block'
+
+          return;
+        }
+
+      })
+      console.log('videoLeftStatus', this.videoLeftStatus);
+
+    },
+
+    // 车间列表第二版初始化
+    workShop () {
+
+      setTimeout(() => {
+
+        if (this.$refs.workShop.classList) {
+          this.$refs.workShop.classList.add('fadeOutRight')
+        }
+      }, 7000)
+
+      setTimeout(() => {
+        this.$refs.arrows.classList.add('arrowBlock')
+      }, 7500)
+    },
+    workShopLeave () {
+      this.$refs.workShop.classList.remove('fadeInRight')
+      this.$refs.workShop.classList.add('fadeOutRight')
+      this.$refs.arrows.classList.add('arrowBlock')
+    },
+    arrows () {
+      this.$refs.workShop.classList.remove('fadeOutRight')
+      this.$refs.workShop.classList.add('fadeInRight')
+      this.$refs.arrows.classList.remove('arrowBlock')
+    },
+
+    workShopEnter () {
+
+    },
+    imgEnter (index) {
+      console.log('dom');
+
+      let dom = document.querySelector(`.title${index}`)
+      dom.classList.add('title-block')
+      dom.classList.add('fadeIn')
+      dom.classList.remove('fadeOut')
+
+    },
+    imgLeave (index) {
+      let dom = document.querySelector(`.title${index}`)
+      dom.classList.remove('fadeIn')
+      dom.classList.add('fadeOut')
+      // dom.classList.remove('title-block')
+    },
+
+
+
+
+
+
+    openListBtn () {
       setTimeout(() => {
         this.$refs.changePlayer.classList.add('changeVideoBlock');
         this.$refs.changePlayer.classList.add('heartBeat');
@@ -225,11 +313,9 @@ export default {
       this.$refs.changePlayer.classList.add('bounceInRight');
 
       this.$refs.changePlayer.classList.add('changeVideoBlock');
-      console.log('x,y', event);
 
       var x = window.event.clientX;
       var y = window.event.clientY;
-      console.log('x,y', x, y);
 
     },
     mousemove () {
@@ -240,7 +326,16 @@ export default {
       var divx2 = this.$refs.changePlayer.offsetLeft + this.$refs.changePlayer.offsetWidth;
       var divy2 = this.$refs.changePlayer.offsetTop + this.$refs.changePlayer.offsetHeight;
       // this.$refs.changePlayer
-      console.log('this.$refs.changePlayer.offsetLeft', this.$refs.changePlayer.offsetLeft);
+      console.log('5454', divx1, divy1, divx2, divy2);
+      console.log('5454s', x, y);
+
+
+      if (x > divx1 && x < divx2 && y > divy1 && y < divy2) {
+
+
+      } else {
+
+      }
 
     },
     mouseLeave () {
@@ -248,6 +343,8 @@ export default {
       this.$refs.changePlayer.classList.add('bounceOutRight');
     },
     changeVideo (item, index) {
+      console.log('item', item, index);
+
       let middleValue = JSON.parse(JSON.stringify(this.videoOne));
       this.videoOne = item
       this.videoData[index] = middleValue;
@@ -265,7 +362,7 @@ export default {
 
     },
     getVideo (roomNo, videoId) {
-      let a= 1;
+      let a = 1;
       let that = this;
       var pathName = roomNo;
       var video = document.getElementById(videoId);
@@ -312,7 +409,7 @@ export default {
       this.$router.push('./historyPage')
     },
     loginUser () {
-      this.$router.push('./views/login/index').catch(() => { })
+      this.$router.push('/login').catch(() => { })
       this.$store.state.loginShow = true
     },
     register () {
@@ -412,9 +509,10 @@ body {
   padding: 10px 55px;
   box-sizing: border-box;
   display: flex;
+
   width: 100%;
   top: 0;
-  // justify-content: space-between;
+  justify-content: flex-end;
   position: absolute;
 }
 .player {
@@ -477,6 +575,8 @@ body {
   line-height: 35px;
   color: #fff;
   font-size: 15px;
+  // margin-right: 300px;
+  display:none;
   .userinfo {
     display: inline-block;
 
@@ -601,7 +701,7 @@ video::-webkit-media-controls-enclosure {
   display: none;
   .workSpace {
     background: #ffffff;
-    width: 80px;
+    width: 100px;
     height: 35px;
     line-height: 35px;
     text-align: center;
@@ -627,11 +727,13 @@ video::-webkit-media-controls-enclosure {
   -webkit-animation-name: move;
   animation-name: move;
   position: relative;
-  margin-left: -25px;
-  font-size: 15px;
-  color: #fff;
+  // margin-left: -25px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fa4848;
 }
 .ar-animated {
+  margin-left: -10px;
   -webkit-animation-duration: 1.5s;
   animation-duration: 1.5s;
   -webkit-animation-fill-mode: both;
@@ -672,13 +774,22 @@ video::-webkit-media-controls-enclosure {
 .ar-delay-10s {
   animation-delay: 0.1s;
 }
+// 第一版车间列表箭头
 .arrow {
   position: fixed;
-  width: 80px;
+  width: 50px;
   display: none;
-  right: 25px;
+  right: 35px;
   top: 30%;
-  text-align: right;
+  // text-align: right;
+}
+// 第二版车间列表箭头
+.arrows {
+  position: fixed;
+  width: 50px;
+  display: none;
+  right: 35px;
+  top: 25%;
 }
 
 .arrowBlock {
@@ -686,5 +797,51 @@ video::-webkit-media-controls-enclosure {
 }
 .changeVideoBlock {
   display: block !important;
+}
+
+// 车间列表第二版
+
+.workShop {
+  position: absolute;
+  transition: 0.34s;
+  top: 200px;
+  right: 0;
+  color: #fff;
+  // border: 1px solid rgba(204, 204, 204, 0.3);
+  border-radius: 3px;
+  // background: rgba(204, 204, 204, 0.3);
+  padding: 10px;
+  > .workSpace {
+    width: 180px;
+    max-height: 101.25px;
+    margin-bottom: 10px;
+    > .video-img {
+      position: relative;
+
+      .title-box {
+        display: none;
+        > .title {
+          position: absolute;
+          // display: none;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      .title-block {
+        display: block !important;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
 }
 </style>

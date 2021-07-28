@@ -20,7 +20,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="订单详情" width="220">
+        <el-table-column label="物流详情" width="220">
           <template slot-scope="scope">
             <span v-if='scope.row.expressNumber==null'>未发货</span>
             <span v-else>{{scope.row.expressName}}：{{scope.row.expressNumber}}</span>
