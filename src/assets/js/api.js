@@ -14,9 +14,11 @@ const api = {
   ifNumber: 'api/enterprise/user/create/' /* TODO: 注册时判断是否有该手机号 */,
   checkNumber: 'api/sms/test' /* TODO:注册时验证验证码和手机号 */,
   checkUserInfo:
-    'api/xwEnterprise/info' /* TODO:找回账号验证用户信息 step1 post */,
+    'api/enterprise/info/company' /* TODO:找回账号验证用户信息 step1 post */,
   amendNumber:
-    'api/xwEnterprise/update/loginPhone' /* TODO:找回用户账号 step2  put */,
+    'api/enterprise/user/retrieval' /* TODO:找回用户账号 step2  put */,
+  passwordChange:
+    'api/enterprise/user/update/pass' /* TODO:登陆后用户修改密码 */,
 
   /* TODO: 公司信息的增删改查 */
   billInfo: '/api/enterprise/info' /* TODO:查询企业公司信息 */,

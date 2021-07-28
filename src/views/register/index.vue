@@ -305,12 +305,13 @@ export default {
           this.$request
             .get(url)
             .then(res => {
-              debugger;
               if (res.status == 200) {
                 this.ifnumber = true;
                 this.isDisabled = false;
               } else if (res.status == 201) {
                 this.$message("此手机号已被注册");
+                this.isDisabled = true;
+
               }
             })
             .catch(err => {
@@ -380,7 +381,6 @@ export default {
     },
     next() {
       if (this.active == 0) {
-        debugger
         this.$refs.form0.validate(valid => {
           if (valid && this.ifnumber) {
             if (this.vcode == "") {
@@ -395,7 +395,6 @@ export default {
                 }
               })
                 .then(res => {
-					        debugger
                   console.log("rrr1122222", res);
                   this.active++;
                 })

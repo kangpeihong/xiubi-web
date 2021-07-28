@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../views/login'
-import Order from '../views/order'
-import Register from '../views/register'
-import Modify from '../views/modifypasw'
-import Modifyifo from '../views/modifyinfo'
-import Modifyadd from '../views/modifyadd'
+// import Login from '../views/login'
+// import Order from '../views/order'
+// import Register from '../views/register'
+// import Modify from '../views/modifypasw'
+// import Modifyifo from '../views/modifyinfo'
+// import Modifyadd from '../views/modifyadd'
 
 import mobileRoutes from './mobileRoute'
+import pcRoute from './pcRoute'
 // import history from '../views/historyPage'
 
 //判断是否为移动端
@@ -28,11 +29,11 @@ function isPhone() {
 
 let ifPhoneStatus = isPhone()
 
-const history = () => import('../views/historyPage')
+// const history = () => import('../views/historyPage')
 
-const findNumber = () => import('../views/findNumber')
+// const findNumber = () => import('../views/findNumber')
 
-const changePage = () => import('../views/module/changePage')
+// const changePage = () => import('../views/module/changePage')
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -41,60 +42,64 @@ VueRouter.prototype.push = function push(location, onResolve, onReject) {
     return originalPush.call(this, location, onResolve, onReject)
   return originalPush.call(this, location).catch((err) => err)
 }
-const route = [
-  {
-    path: '/login',
-    component: !ifPhoneStatus
-      ? (resolve) => require(['../views/login'], resolve)
-      : (resolve) => require(['../mobile/mobileLogin'], resolve),
-  },
-  {
-    path: '/order',
-    name: 'Order',
-    component: Order,
-  },
-  // {
-  //   path: '/register',
-  //   component: Register,
-  // },
-  {
-    path: '/register',
-    component: !ifPhoneStatus
-      ? (resolve) => require(['../views/register'], resolve)
-      : (resolve) => require(['../mobile/mobileRegister'], resolve),
-  },
+// const route = [
+//   {
+//     path: '/login',
+//     component: !ifPhoneStatus
+//       ? (resolve) => require(['../views/login'], resolve)
+//       : (resolve) => require(['../mobile/mobileLogin'], resolve),
+//   },
+//   {
+//     path: '/order',
+//     name: 'Order',
+//     component: Order,
+//   },
+//   // {
+//   //   path: '/register',
+//   //   component: Register,
+//   // },
+//   {
+//     path: '/register',
+//     component: !ifPhoneStatus
+//       ? (resolve) => require(['../views/register'], resolve)
+//       : (resolve) => require(['../mobile/mobileRegister'], resolve),
+//   },
 
-  {
-    path: '/findnumber',
-    component: findNumber,
-  },
-  {
-    path: '/modify',
-    component: Modify,
-  },
-  {
-    path: '/modifyinfo',
-    component: Modifyifo,
-  },
-  {
-    path: '/historyPage',
-    component: history,
-  },
-  {
-    path: '/changePage',
-    name: 'changePage',
-    component: changePage,
-    meta: {
-      keepAlive: true, // 需要缓存
-    },
-  },
-]
+//   {
+//     path: '/findnumber',
+//     component: findNumber,
+//   },
+//   {
+//     path: '/modify',
+//     component: Modify,
+//   },
+//   {
+//     path: '/modifyinfo',
+//     component: Modifyifo,
+//   },
+//   {
+//     path: '/historyPage',
+//     component: history,
+//   },
+//   {
+//     path: '/changePage',
+//     name: 'changePage',
+//     component: changePage,
+//     meta: {
+//       keepAlive: true, // 需要缓存
+//     },
+//   },
+// ]
 
 let routes
 if (ifPhoneStatus) {
+  // 移动端路由
   routes = mobileRoutes
 } else {
-  routes = route
+  // routes = route
+
+  // pc端路由
+  routes = pcRoute
 }
 
 const router = new VueRouter({
@@ -104,19 +109,21 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   window.addEventListener('load', function() {
-    // 移动端跳转页面
     if (ifPhoneStatus) {
+      // 移动端页面刷新时跳转页面
+      next('/err')
       // if (to.path === '/login') {
       //   next()
       //   // 列表页面的路由
       // }
     } else {
+      // pc端页面刷新时跳转页面
       if (
         to.path === '/login' ||
         to.path === '/findnumber' ||
         to.path === '/register'
       ) {
-        next('/')
+        next()
         // 列表页面的路由
       }
 
@@ -124,21 +131,40 @@ router.beforeEach((to, from, next) => {
       if (token) {
         next()
       } else {
-        next('/login')
+        next('/')
       }
     }
   })
   // 1.登录页面直接放行
-  if (
-    to.path === '/login' ||
-    to.path === '/register' ||
-    to.path === '/' ||
-    to.path === '/findnumber'
-  ) {
-    // debugger
-    next()
-    return
+
+  // vue页面跳转
+
+  if (ifPhoneStatus) {
+    // vue  移动端页面跳转
+  } else {
+    // vue pc端页面跳转
+    if (
+      to.path === '/login' ||
+      to.path === '/register' ||
+      to.path === '/' ||
+      to.path === '/findnumber'
+    ) {
+      // debugger
+      next()
+      return
+    }
   }
+
+  // if (
+  //   to.path === '/login' ||
+  //   to.path === '/register' ||
+  //   to.path === '/' ||
+  //   to.path === '/findnumber'
+  // ) {
+  //   // debugger
+  //   next()
+  //   return
+  // }
 
   // 2.非登录页面 ，需要校验
   const token = window.sessionStorage.getItem('user-token')
@@ -148,19 +174,8 @@ router.beforeEach((to, from, next) => {
     if (ifPhoneStatus) {
       next()
     } else {
-      next('/login')
+      next('/')
     }
   }
-  //   router.beforeEach((to, from, next) => {
-  //     // to将要访问的路径
-  //     // from代表从哪个路径跳转而来
-  //     // next 是一个函数，表示放行
-  //     // next() 放行， next('/login')强制跳转
-  //     debugger
-  //     if (to.path === '/login') return next();
-  //     const tokenStr = window.sessionStorage.getItem('user-token');  //判断是否存在token
-  //     if (!tokenStr) return next('/login');
-  //     next();
-  // });
 })
 export default router

@@ -105,7 +105,7 @@ export default {
   bottom: 45px;
   left: 50px;
   overflow: hidden;
-
+  display: none;
   .express-message {
     margin-top: 30px;
 

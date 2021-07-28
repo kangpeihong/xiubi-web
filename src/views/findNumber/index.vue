@@ -15,13 +15,13 @@
       >
         <el-form-item
           label="公司名称"
-          prop="enterpriseName"
+          prop="name"
           :rules="[
             { required: true, message: '请输入公司名称', trigger: 'change' }
           ]"
         >
           <el-input
-            v-model="companyInfo.enterpriseName"
+            v-model="companyInfo.name"
             placeholder="公司名称"
           ></el-input>
         </el-form-item>
@@ -52,7 +52,9 @@
         <el-form-item
           label="修改账号"
           prop="loginPhone"
-          :rules="[{ required: true, message: '请输入账号', trigger: 'blur' }]"
+          :rules="[{ required: true, message: '请输入账号', trigger: 'blur' },
+            { pattern: /^1[34578]\d{9}$/, message: '电话号输入有误' }
+          ]"
         >
           <el-input
             oninput="if(value.length>5)value=value.slice(0,11)"
@@ -63,10 +65,10 @@
         </el-form-item>
         <el-form-item
           label="修改密码"
-          prop="pass"
+          prop="password"
           :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]"
         >
-          <el-input v-model="userInfo.pass" placeholder="修改密码"></el-input>
+          <el-input v-model="userInfo.password" placeholder="修改密码"></el-input>
         </el-form-item>
         <el-form-item class="button">
           <el-button type="primary" @click="submit">确认</el-button>
@@ -84,13 +86,13 @@ export default {
       msg: "",
       step: true,
       companyInfo: {
-        enterpriseName: "",
+        name: "",
         creditCode: ""
       },
       userInfo: {
         id: "",
         loginPhone: "",
-        pass: ""
+        password: "",
       }
     };
   },
@@ -108,7 +110,9 @@ export default {
           this.$request.post(url, this.companyInfo).then(res => {
             if (res.status == 200 && res.data != "") {
               this.step = false;
-              this.userInfo.id = res.data.id;
+              console.log('reeeee',res);
+              debugger
+              this.userInfo.id = res.data;
             } else {
               this.$message.error(
                 "请输入正确的公司名称/税号，如忘记请联系管理人员!"
@@ -118,8 +122,14 @@ export default {
       });
     },
     submit() {
+
+      console.log('this.user',this.userInfo);
+      
       this.$refs.form2.validate(valid => {
         if (valid && this.userInfo !== "") {
+          
+          
+          debugger
           this.$request.put(this.$api.amendNumber, this.userInfo).then(res => {
             // 17701246400
             if (res.status == 200) {

@@ -11,7 +11,7 @@ export default new Vuex.Store({
     userId: sessionStorage.getItem('user-id')
       ? JSON.parse(sessionStorage.getItem('user-id'))
       : '',
-    loginShow: true,
+    loginShow: false,
     registerShow: false, //注册页面开关
     findNumber: false,
     againOrder: false,
